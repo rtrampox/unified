@@ -5,8 +5,6 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
-    env_file:
-      - ./.env.docker
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
@@ -23,14 +21,11 @@ services:
       - "3000:3000"
     depends_on:
       - db
-      - redis
 
   web:
     build:
       context: ./web
       dockerfile: Dockerfile
-    env_file:
-      - ./.env.docker
     environment:
       - BACKEND_URL=${BACKEND_URL}
       - INPUT_FILE_PATH=${INPUT_FILE_PATH}
@@ -41,8 +36,6 @@ services:
 
   db:
     image: postgres:17-alpine
-    env_file:
-      - .env.docker
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
