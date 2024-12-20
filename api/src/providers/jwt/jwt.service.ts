@@ -48,16 +48,16 @@ type IdTokenModes =
 @Injectable()
 export class JWTService {
 	private JWT_SECRET = jose.base64url.decode(process.env.JWT_SECRET || "");
-	private privKeyPath = "keys/private_pkcs8.pem";
-	private pubKeyPath = "keys/public.pem";
+	private privKeyStr = process.env.JWT_PRIVATE_KEY as string;
+	private pubKeyStr = process.env.JWT_PUBLIC_KEY as string;
 	private privateKey: jose.KeyLike;
 	private publicKey: jose.KeyLike;
 
 	constructor(private readonly db: DBService) {}
 
-	private async initializeKeys(privKey: string, pubKey: string) {
-		this.privateKey = await jose.importPKCS8(privKey, "RS256");
-		this.publicKey = await jose.importSPKI(pubKey, "RS256");
+	private async initializeKeys() {
+		this.privateKey = await jose.importPKCS8(this.privKeyStr, "RS256");
+		this.publicKey = await jose.importSPKI(this.pubKeyStr, "RS256");
 	}
 
 	private claims: UserClaims = {
@@ -68,10 +68,7 @@ export class JWTService {
 
 	private async ensureLoaded() {
 		if (!this.privateKey || !this.publicKey) {
-			return await this.initializeKeys(
-				fs.readFileSync(path.resolve(this.privKeyPath), "utf8"),
-				fs.readFileSync(path.resolve(this.pubKeyPath), "utf8"),
-			);
+			return await this.initializeKeys();
 		}
 	}
 
