@@ -9,10 +9,11 @@ COPY pnpm-lock.yaml ./
 
 RUN pnpm install
 
+COPY . .
+
 # generate the prisma client
 RUN pnpm exec prisma generate
 
-COPY . .
 RUN pnpm run build
 
 FROM node:21-alpine as runtime
