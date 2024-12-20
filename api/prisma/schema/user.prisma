@@ -1,0 +1,64 @@
+enum OtpType {
+    EMAIL
+    PHONE
+    APP
+}
+
+model User {
+    id            String  @id @default(uuid())
+    firstName     String
+    lastName      String
+    username      String  @unique
+    email         String  @unique
+    emailVerified Boolean @default(false)
+    phone         String?
+    phoneVerified Boolean @default(false)
+    picture       String?
+
+    passwordHash String
+    otp          Boolean  @default(false)
+    otpType      OtpType?
+    otpSecret    String?
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @default(now()) @updatedAt
+    deletedAt DateTime?
+
+    Client            Client[]
+    TrustedDevice     TrustedDevice[]
+    AuthorizedClient  AuthorizedClient[]
+    AuthorizationCode AuthorizationCode[]
+    Session           Session[]
+    RefreshToken      RefreshToken[]
+
+    @@index([email, id])
+    @@map("users")
+}
+
+model TrustedDevice {
+    id        String   @id @default(uuid())
+    userId    String
+    userAgent String
+    ip        String
+    createdAt DateTime @default(now())
+
+    User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@map("trusted_devices")
+}
+
+model Session {
+    id        String @id @default(uuid())
+    userId    String
+    userAgent String
+    requestIp String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+    expiresAt DateTime
+
+    User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([id])
+    @@map("sessions")
+}

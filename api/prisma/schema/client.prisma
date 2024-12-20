@@ -1,0 +1,99 @@
+enum Scopes {
+    openid
+    profile
+    email
+    phone
+    offline_access
+}
+
+model Client {
+    id               String   @id @default(cuid())
+    userId           String
+    name             String
+    picture          String?
+    secretHash       String
+    redirectUri      String[]
+    scopes           Scopes[] @default([openid])
+    contactEmail     String
+    privacyPolicyUrl String?
+    termsUrl         String?
+    enabled          Boolean  @default(true)
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @default(now()) @updatedAt
+    deletedAt DateTime?
+
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    AuthorizedClient  AuthorizedClient[]
+    AuthorizationCode AuthorizationCode[]
+    RefreshToken      RefreshToken[]
+
+    @@unique([name, userId])
+    @@index([id])
+    @@map("clients")
+}
+
+model AuthorizedClient {
+    id       String   @id @default(cuid())
+    clientId String
+    userId   String
+    scopes   Scopes[]
+
+    client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @default(now()) @updatedAt
+    deletedAt DateTime?
+
+    @@unique([clientId, userId])
+    @@index([id])
+    @@map("authorized_clients")
+}
+
+enum CodeChallengeMethods {
+    plain
+    S256
+}
+
+model AuthorizationCode {
+    id                  String                @id @default(cuid())
+    userId              String
+    clientId            String
+    scopes              Scopes[]
+    responseType        String[]
+    redirectUri         String
+    codeChallenge       String?
+    codeChallengeMethod CodeChallengeMethods?
+    nonce               String?
+
+    client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+    expiresAt DateTime
+
+    @@index([id])
+    @@map("authorization_codes")
+}
+
+model RefreshToken {
+    id        String   @id @default(cuid())
+    token     String   @unique
+    userId    String
+    clientId  String
+    scopes    Scopes[]
+    refreshed Boolean  @default(false)
+
+    client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+    expiresAt DateTime
+
+    @@index([token, id])
+    @@map("refresh_tokens")
+}
