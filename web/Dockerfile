@@ -4,10 +4,10 @@ RUN corepack enable pnpm
 
 WORKDIR /app
 COPY ./package.json ./pnpm-lock.yaml ./
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY . .
-RUN pnpm run generate-api
+
 RUN pnpm build
 
 FROM node:21-alpine AS runtime

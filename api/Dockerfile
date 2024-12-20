@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 COPY pnpm-lock.yaml ./
 
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 
@@ -16,7 +16,7 @@ RUN pnpm exec prisma generate
 
 RUN pnpm run build
 
-FROM node:21-alpine as runtime
+FROM node:21-alpine AS runtime
 
 WORKDIR /usr/src/app
 
