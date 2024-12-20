@@ -1,5 +1,6 @@
 import { browser } from "$app/environment";
 import type { RequestEvent } from "@sveltejs/kit";
+import { env } from "$env/dynamic/private";
 
 // NOTE: Supports cases where `content-type` is other than `json`
 const getBody = <T>(c: Response | Request): Promise<T> => {
@@ -20,7 +21,7 @@ const getBody = <T>(c: Response | Request): Promise<T> => {
 const getUrl = (contextUrl: string): URL => {
 	const url = new URL(contextUrl);
 
-	const backendUrl = new URL(process.env.BACKEND_URL);
+	const backendUrl = new URL(env.BACKEND_URL);
 
 	url.protocol = backendUrl.protocol;
 	url.host = backendUrl.host;
