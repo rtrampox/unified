@@ -38,7 +38,7 @@ services:
 
       - "traefik.http.routers.unified_backend.entrypoints=https"
       - "traefik.http.routers.unified_backend.tls=true"
-      - "traefik.http.services.unified_backend.loadbalancer.server.port=3001"
+      - "traefik.http.services.unified_backend.loadbalancer.server.port=3000"
       - "traefik.docker.network=proxy"
 
   web:
