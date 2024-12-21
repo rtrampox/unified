@@ -1,5 +1,8 @@
 FROM node:21-alpine AS build
 
+ARG SENTRY_AUTH_TOKEN
+ENV SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+
 RUN corepack enable pnpm
 
 WORKDIR /usr/src/app
