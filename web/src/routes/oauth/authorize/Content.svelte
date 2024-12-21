@@ -35,7 +35,8 @@
 		<title>Authorize {data.client.name} - Unified</title>
 		<meta
 			name="description"
-			content="Authorize {data.client.name} to access your Unified account." />
+			content="Authorize {data.client.name} to access your Unified account."
+		/>
 	{/if}
 </svelte:head>
 {#if data.error}
@@ -55,7 +56,8 @@
 			<div class="w-full">
 				{#if !data.user.isHinted}
 					<div
-						class="my-3 flex flex-row items-center justify-center gap-1 rounded-xl border border-orange-500/70 bg-orange-600/5 p-3 text-neutral-400 dark:text-white">
+						class="my-3 flex flex-row items-center justify-center gap-1 rounded-xl border border-orange-500/70 bg-orange-600/5 p-3 text-neutral-400 dark:text-white"
+					>
 						<InfoIcon class="size-4 text-orange-500" />
 						<p class="ml-2">
 							{data.client.name} has recommended that you continue as {data.user.login_hint}.
@@ -73,7 +75,8 @@
 							variant="ringHover"
 							type="submit"
 							class="h-11 w-full bg-zinc-900 text-white hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-							isLoading={loading}>Authorize</Button>
+							isLoading={loading}>Authorize</Button
+						>
 					</form>
 					<Button
 						variant="ringHoverSecondary"
@@ -82,7 +85,8 @@
 						onclick={() => {
 							window.location.href = `${data.params.redirect_uri}?error=access_denied`;
 						}}
-						class="h-11 w-full">Cancel</Button>
+						class="h-11 w-full">Cancel</Button
+					>
 				</div>
 			</div>
 		</div>
@@ -93,7 +97,7 @@
 			</p>
 			<div class="text-sm text-zinc-500 dark:text-zinc-400">
 				<p>You can always manage apps that you allowed access to at</p>
-				<Link href="/account">your account</Link>.
+				<Link href="/account" target="_blank">your account</Link>.
 			</div>
 		</div>
 	</div>
