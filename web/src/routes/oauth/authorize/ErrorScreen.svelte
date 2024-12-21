@@ -17,17 +17,20 @@
 	<div class="flex h-full flex-col rounded-3xl bg-neutral-900">
 		<div class="flex h-full flex-col justify-center">
 			<div class="p-5 py-7">
-				<div class="flex w-full flex-col items-center">
+				<div class="flex w-full flex-col items-center gap-5">
 					<div class="mb-32flex w-full flex-col items-start gap-3">
 						<Badge variant="destructive">400</Badge>
 						<h1 class="text-start text-2xl font-bold">Bad Request</h1>
 
-						<h1 class="mb-1 text-start text-muted-foreground">
+						<h1 class="text-muted-foreground mb-1 text-start">
 							We couldn't process your request. Please check the input and try again.
 						</h1>
-						<h1 class="mb-1 text-start text-muted-foreground">
+						<h1 class="text-muted-foreground mb-1 text-start">
 							{data.error?.name}
 						</h1>
+						{#if data.error?.requestId}
+							<p class="text-muted-foreground">Request ID: {data.error?.requestId}</p>
+						{/if}
 					</div>
 					<h1 class="text-center">{data.error?.message}</h1>
 				</div>

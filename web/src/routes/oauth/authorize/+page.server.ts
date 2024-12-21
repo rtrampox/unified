@@ -13,7 +13,7 @@ import { requiresLogin } from "@/redirect";
 import { isRedirect } from "@sveltejs/kit";
 
 type Res =
-	| { error: { name: string; message: string }; data: null }
+	| { error: { name: string; message: string; requestId?: string }; data: null }
 	| {
 			error: null;
 			user: getAuthorizeInfoResponse["data"]["user"];
@@ -54,6 +54,7 @@ export const load: PageServerLoad<Res | void> = async (event) => {
 					message:
 						(data as unknown as HttpExceptionEntity).error.errors ??
 						"Unexpected error while gathering data for this app",
+					requestId: (data as unknown as HttpExceptionEntity).error.requestId,
 				},
 				data: null,
 				params: parsed,

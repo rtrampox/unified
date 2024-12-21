@@ -300,6 +300,7 @@ export interface ErrorsObject {
   errors: string;
   message: string;
   path: string;
+  requestId: string;
   timestamp: string;
 }
 
