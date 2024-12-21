@@ -55,6 +55,8 @@ services:
         - PROTOCOL_HEADER=x-forwarded-proto
         - HOST_HEADER=x-forwarded-host
         - ADDRESS_HEADER=x-forwarded-for
+        # Allow profile picture uploads, as SvelteKit max size is 512KB
+        - BODY_SIZE_LIMIT=10M
     environment:
       - BACKEND_URL=${BACKEND_URL}
       - INPUT_FILE_PATH=${INPUT_FILE_PATH}

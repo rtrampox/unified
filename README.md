@@ -1,5 +1,9 @@
 # .env
 
+# FRONT_PUBLIC_URL
+
+Must be the public frotend domain, without protocol
+
 # JWT_SECRET
 
 ```js
