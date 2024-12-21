@@ -13,6 +13,7 @@
 		"dev": "nest start --watch",
 		"start:debug": "nest start --debug --watch",
 		"start:prod": "node dist/main",
+		"start:migrate:prod": "prisma migrate deploy && npm run start:prod",
 		"lint": "biome lint --write",
 		"test": "jest",
 		"test:watch": "jest --watch",
