@@ -1,4 +1,3 @@
-import { DBUS_SESSION_BUS_ADDRESS } from "$env/static/private";
 import type { SessionResponse } from "@/api";
 import type { PageServerLoad } from "./$types";
 import { logoutAction } from "@/server/logout";

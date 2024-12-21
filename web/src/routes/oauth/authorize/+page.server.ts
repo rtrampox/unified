@@ -44,7 +44,7 @@ export const load: PageServerLoad<Res | void> = async (event) => {
 			};
 		}
 
-		const { data, status } = await getAuthorizeInfo({ ...parsed });
+		const { data, status } = await getAuthorizeInfo(parsed);
 		if (status !== 200) {
 			return {
 				error: {

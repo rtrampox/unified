@@ -71,7 +71,7 @@ export const actions: Actions = {
 				identity: { email: form.data.email, password: form.data.password, trust: form.data.trust },
 				otp: { code: form.data.code, type: "APP" },
 			},
-			{ headers: event.request.headers },
+			{ headers: new Headers(event.request.headers) },
 		);
 
 		if (status !== 201 && status !== 200) {
