@@ -6,6 +6,8 @@ services:
     build:
       context: ./api
       dockerfile: Dockerfile
+      args: 
+        - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
     environment:
       - DATABASE_URL=${DATABASE_URL}
       
