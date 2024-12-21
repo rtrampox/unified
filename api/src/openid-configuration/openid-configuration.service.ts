@@ -1,5 +1,4 @@
 import { Injectable } from "@nestjs/common";
-import * as fs from "node:fs";
 import * as jose from "jose";
 import { OpenidConfigurationResponseDto } from "./entities/openid-configuration.entity";
 import { OIDC_KID } from "./oid.constants";
@@ -49,18 +48,17 @@ export class OpenidConfigurationService {
 			keys: [
 				{
 					// Key used to sign ID and access tokens
-					...(await this.generateJwks("keys/public.pem", OIDC_KID)),
+					...(await this.generateJwks(OIDC_KID)),
 				},
 			],
 		};
 	}
 
-	private async generateJwks(publicKeyPath: string, kid: string): Promise<any> {
+	private async generateJwks(kid: string): Promise<any> {
 		// Read the public key
-		const publicKeyPem = fs.readFileSync(publicKeyPath, "utf8");
-
+		const publicKeyStr = process.env.JWT_PUBLIC_KEY as string;
 		// Import the public key
-		const publicKey = await jose.importSPKI(publicKeyPem, "RS256");
+		const publicKey = await jose.importSPKI(publicKeyStr, "RS256");
 
 		const { ...rest } = await jose.exportJWK(publicKey);
 
