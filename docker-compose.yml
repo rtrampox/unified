@@ -1,59 +1,78 @@
 services:
   api:
+    networks:
+      - unified_internal
+      - proxy
     build:
       context: ./api
       dockerfile: Dockerfile
-      args:
-        - DATABASE_URL=${DATABASE_URL}
-        - JWT_ISSUER_URL=${JWT_ISSUER_URL}
-        - JWT_SECRET=${JWT_SECRET}
-        - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
-        - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-        - AWS_REGION=${AWS_REGION}
-        - AWS_BUCKET=${AWS_BUCKET}
-        - AWS_ENDPOINT_URL=${AWS_ENDPOINT_URL}
-        - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-        - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-        - CF_EMAIL=${CF_EMAIL}
-        - CF_API_KEY=${CF_API_KEY}
-        - CF_ZONE_ID=${CF_ZONE_ID}
-        - API_PORT=${API_PORT}
     environment:
       - DATABASE_URL=${DATABASE_URL}
+      
+      - API_PUBLIC_URL=${API_PUBLIC_URL}
+      - FRONT_PUBLIC_URL=${FRONT_PUBLIC_URL}
+
       - JWT_ISSUER_URL=${JWT_ISSUER_URL}
       - JWT_SECRET=${JWT_SECRET}
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+
       - AWS_REGION=${AWS_REGION}
       - AWS_BUCKET=${AWS_BUCKET}
       - AWS_ENDPOINT_URL=${AWS_ENDPOINT_URL}
       - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
       - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+
       - CF_EMAIL=${CF_EMAIL}
       - CF_API_KEY=${CF_API_KEY}
       - CF_ZONE_ID=${CF_ZONE_ID}
+      
       - API_PORT=${API_PORT}
-    ports:
-      - "3000:3000"
     depends_on:
       - db
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.unified_backend.rule=Host(`apis.rtrampox.com.br`) && PathPrefix(`/unified/`) || Host(`apis.rtrampox.cloud`) && PathPrefix(`/unified/`)"
+      - "traefik.http.middlewares.pathPrefix_strip.stripprefix.prefixes=/unified"
+      - "traefik.http.routers.unified_backend.middlewares=pathPrefix_strip@docker,gzip"
+
+      - "traefik.http.routers.unified_backend.entrypoints=https"
+      - "traefik.http.routers.unified_backend.tls=true"
+      - "traefik.http.services.unified_backend.loadbalancer.server.port=3001"
+      - "traefik.docker.network=proxy"
 
   web:
+    networks:
+      - unified_internal
+      - proxy
     build:
       context: ./web
       dockerfile: Dockerfile
       args:
         - BACKEND_URL=${BACKEND_URL}
         - INPUT_FILE_PATH=${INPUT_FILE_PATH}
+        - ORIGIN=https://accounts.rtrampox.com.br
+        - PROTOCOL_HEADER=x-forwarded-proto
+        - HOST_HEADER=x-forwarded-host
+        - ADDRESS_HEADER=x-forwarded-for
     environment:
       - BACKEND_URL=${BACKEND_URL}
       - INPUT_FILE_PATH=${INPUT_FILE_PATH}
-    ports:
-      - "5173:3000"
     depends_on:
       - api
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.unified_frontend.rule=Host(`accounts.rtrampox.com.br`)"
+      - "traefik.http.routers.unified_frontend.entrypoints=https"
+      - "traefik.http.routers.unified_frontend.tls=true"
+      - "traefik.http.routers.unified_frontend.middlewares=gzip"
+
+      - "traefik.http.services.unified_frontend.loadbalancer.server.port=3000"
+      - "traefik.docker.network=proxy"
 
   db:
+    networks:
+      - unified_internal
     image: postgres:17-alpine
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
@@ -61,3 +80,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
       - ./data/db:/var/lib/postgresql/data
+
+networks:
+  unified_internal:
+  proxy:
+    external: true
