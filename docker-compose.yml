@@ -1,6 +1,5 @@
 services:
   api:
-    image: rtrampox/unified-api:latest
     build:
       context: ./api
       dockerfile: Dockerfile
@@ -40,7 +39,6 @@ services:
       - db
 
   web:
-    image: rtrampox/unified-web:latest
     build:
       context: ./web
       dockerfile: Dockerfile
