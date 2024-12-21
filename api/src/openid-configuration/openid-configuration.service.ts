@@ -7,12 +7,15 @@ import { OIDC_KID } from "./oid.constants";
 @Injectable()
 export class OpenidConfigurationService {
 	getOpenidConfiguration() {
+		const ISSUER_URL = process.env.JWT_ISSUER_URL ?? "https://localhost:3000";
+		const API_PUBLIC_URL = process.env.API_PUBLIC_URL;
+
 		return {
-			issuer: "https://localhost:3000",
-			jwks_uri: "http://localhost:3000/.well-known/openid-configuration/jwks.json",
-			authorization_endpoint: "http://localhost:3000/v1/oauth/authorize",
-			token_endpoint: "http://localhost:3000/v1/oauth/token",
-			userinfo_endpoint: "http://localhost:3000/v1/oauth/userinfo",
+			issuer: ISSUER_URL ?? "https://localhost:3000",
+			jwks_uri: `${API_PUBLIC_URL}/.well-known/openid-configuration/jwks.json`,
+			authorization_endpoint: `${API_PUBLIC_URL}/v1/oauth/authorize`,
+			token_endpoint: `${API_PUBLIC_URL}/v1/oauth/token`,
+			userinfo_endpoint: `${API_PUBLIC_URL}/v1/oauth/userinfo`,
 			scopes_supported: ["openid", "profile", "email", "phone", "offline_access"],
 			response_types_supported: ["code", "id_token", "code id_token"],
 			subject_types_supported: ["public"],
