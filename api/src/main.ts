@@ -3,7 +3,7 @@ import { AppModule } from "./app.module";
 import { VersioningType } from "@nestjs/common";
 import { bootstrapSwagger } from "./lib/config/swagger";
 import cookieParser from "cookie-parser";
-import "./instrument";
+import * as Sentry from "@sentry/nestjs";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -23,6 +23,13 @@ async function bootstrap() {
 	bootstrapSwagger(app);
 
 	app.use(cookieParser());
+
+	if (!process.env.SENTRY_DSN) {
+		console.error("Sentry DSN is not set, skipping Sentry initialization");
+	}
+	Sentry.init({
+		dsn: process.env.SENTRY_DSN,
+	});
 
 	await app.listen(process.env.API_PORT ?? 3000);
 }
