@@ -22,11 +22,13 @@ export const bootstrapSwagger = (app: INestApplication) => {
 	};
 
 	const documentFactory = () => SwaggerModule.createDocument(app, config, options);
-	SwaggerModule.setup("swagger", app, documentFactory, {
-		jsonDocumentUrl: "swagger/json",
-	});
 
 	fs.writeFileSync(path.resolve(path.join("..", "swagger.json")), JSON.stringify(documentFactory(), null, 2));
 
-	app.use("/scalar", apiReference({ spec: { content: documentFactory() } }));
+	if (!process.env.DISABLE_SWAGGER && process.env.DISABLE_SWAGGER !== "true") {
+		SwaggerModule.setup("swagger", app, documentFactory, {
+			jsonDocumentUrl: "swagger/json",
+		});
+		app.use("/scalar", apiReference({ spec: { content: documentFactory() } }));
+	}
 };
