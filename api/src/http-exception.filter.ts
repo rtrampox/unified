@@ -31,7 +31,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
 			},
 		});
 
-		this.logger.error(`HTTP Exception: ${exception.message}`, status >= 500 ? exception.stack : undefined);
+		this.logger.error(
+			`HTTP Exception: ${exception.message}, requestId: ${requestId}`,
+			status >= 500 ? exception.stack : undefined,
+		);
 
 		const responseBody: HttpExceptionEntity = {
 			statusCode: status,
