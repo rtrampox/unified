@@ -38,7 +38,9 @@ export const actions: Actions = {
 		if (status !== 201 && status !== 200) {
 			return fail(400, {
 				form,
-				message: (data as unknown as HttpExceptionEntity).error.message,
+				message:
+					(data as unknown as HttpExceptionEntity).error.message ??
+					"Unexpected error while logging you in",
 				otp: false,
 			});
 		}

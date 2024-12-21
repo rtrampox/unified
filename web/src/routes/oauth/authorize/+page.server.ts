@@ -48,8 +48,12 @@ export const load: PageServerLoad<Res | void> = async (event) => {
 		if (status !== 200) {
 			return {
 				error: {
-					name: (data as unknown as HttpExceptionEntity).error.message,
-					message: (data as unknown as HttpExceptionEntity).error.errors,
+					name:
+						(data as unknown as HttpExceptionEntity).error.message ??
+						"Unexpected error while gathering data for this app",
+					message:
+						(data as unknown as HttpExceptionEntity).error.errors ??
+						"Unexpected error while gathering data for this app",
 				},
 				data: null,
 				params: parsed,
