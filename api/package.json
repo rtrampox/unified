@@ -34,6 +34,8 @@
 		"@paralleldrive/cuid2": "^2.2.2",
 		"@prisma/client": "^6.1.0",
 		"@scalar/nestjs-api-reference": "^0.3.172",
+		"@sentry/nestjs": "^8.47.0",
+		"@sentry/profiling-node": "^8.47.0",
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.14.1",
 		"cookie-parser": "latest",

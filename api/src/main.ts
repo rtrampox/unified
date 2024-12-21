@@ -3,7 +3,7 @@ import { AppModule } from "./app.module";
 import { VersioningType } from "@nestjs/common";
 import { bootstrapSwagger } from "./lib/config/swagger";
 import cookieParser from "cookie-parser";
-import { HttpExceptionFilter } from "./http-exception.filter";
+import "./instrument";
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -23,8 +23,6 @@ async function bootstrap() {
 	bootstrapSwagger(app);
 
 	app.use(cookieParser());
-
-	app.useGlobalFilters(new HttpExceptionFilter());
 
 	await app.listen(process.env.API_PORT ?? 3000);
 }

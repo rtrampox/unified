@@ -1,6 +1,6 @@
 import { ExceptionFilter, Catch, ArgumentsHost, HttpException } from "@nestjs/common";
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNumber, IsObject, IsString } from "class-validator";
+import { IsObject } from "class-validator";
 import { Request, Response } from "express";
 import { ZodValidationException } from "nestjs-zod";
 import { fromError } from "zod-validation-error";
