@@ -2,7 +2,7 @@ package unified
 
 type Unified struct {
 	ClientID     string
-	ClientSecret string
+	ClientSecret *string
 	RedirectUri  string
 	Scopes       []string
 }
@@ -31,7 +31,7 @@ func fromError(err error) *UnifiedError {
 
 // New creates a new Unified instance.
 // see: openID configuration (https://acconts.rtrampox.com.br/.well-known/openid-configuration)
-func New(clientID, clientSecret, redirectUri string, scopes []string) *Unified {
+func New(clientSecret *string, clientID, redirectUri string, scopes []string) *Unified {
 	return &Unified{
 		ClientID:     clientID,
 		ClientSecret: clientSecret,

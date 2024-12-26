@@ -27,11 +27,22 @@ func (u *Unified) ExchangeAuthToken(params AuthTokenParams) (*AuthTokenBody, *Un
 	client := http.Client{}
 
 	body := url.Values{
-		"grant_type":    {"authorization_code"},
-		"code":          {params.Code},
-		"client_id":     {u.ClientID},
-		"client_secret": {u.ClientSecret},
-		"redirect_uri":  {u.RedirectUri},
+		"grant_type":   {"authorization_code"},
+		"code":         {params.Code},
+		"client_id":    {u.ClientID},
+		"redirect_uri": {u.RedirectUri},
+	}
+
+	if u.ClientSecret != nil {
+		body.Add("client_secret", *u.ClientSecret)
+	}
+
+	if u.ClientSecret == nil && params.CodeChallenge == nil {
+		return nil, &UnifiedError{
+			StatusCode: 400,
+			Message:    "client_secret or code_challenge must be provided",
+			From:       "local",
+		}
 	}
 
 	if params.CodeChallenge != nil {
