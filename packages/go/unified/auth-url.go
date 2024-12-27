@@ -3,7 +3,7 @@ package unified
 import (
 	"net/url"
 
-	"github.com/rtrampox/unified/go/unified/helpers"
+	"github.com/rtrampox/unified/packages/go/unified/helpers"
 )
 
 type AuthorizationURLBody struct {
