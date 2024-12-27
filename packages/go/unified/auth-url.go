@@ -40,7 +40,7 @@ func (u *Unified) AuthorizationURL(params AuthorizationURLParams) (*Authorizatio
 		q.Add("code_challenge_method", chall.Method)
 	}
 
-	q.Add("scope", strings.Join(u.Scopes, ""))
+	q.Add("scope", strings.Join(u.Scopes, " "))
 	q.Add("response_type", "code")
 	q.Add("client_id", u.ClientID)
 	q.Add("redirect_uri", u.RedirectUri)
