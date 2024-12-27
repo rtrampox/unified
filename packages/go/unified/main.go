@@ -7,6 +7,13 @@ type Unified struct {
 	Scopes       []string
 }
 
+type NewUnifiedParams struct {
+	ClientID     string   // The client ID of your application
+	RedirectUri  string   // The URI to redirect the user after the authorization
+	Scopes       []string // The scopes to request from the user
+	ClientSecret nilStr   // The client secret of your application. If none is provided, PKCE will be used by default.
+}
+
 type maybeError *struct {
 	Message string `json:"message"`
 }
@@ -31,11 +38,11 @@ func fromError(err error) *UnifiedError {
 
 // New creates a new Unified instance.
 // see: openID configuration (https://acconts.rtrampox.com.br/.well-known/openid-configuration)
-func New(clientSecret *string, clientID, redirectUri string, scopes []string) *Unified {
+func New(params NewUnifiedParams) *Unified {
 	return &Unified{
-		ClientID:     clientID,
-		ClientSecret: clientSecret,
-		RedirectUri:  redirectUri,
-		Scopes:       scopes,
+		ClientID:     params.ClientID,
+		ClientSecret: params.ClientSecret,
+		RedirectUri:  params.RedirectUri,
+		Scopes:       params.Scopes,
 	}
 }

@@ -2,6 +2,7 @@ package unified
 
 import (
 	"net/url"
+	"strings"
 
 	"github.com/rtrampox/unified/packages/go/unified/helpers"
 )
@@ -14,7 +15,7 @@ type AuthorizationURLBody struct {
 type AuthorizationURLParams struct {
 	Prompt        *string // nullable. One of "none", "login", "consent", "select_account"
 	State         *string // nullable. A random string to protect against CSRF attacks
-	CodeChallenge bool    // If true, generates a code challenge and adds it to the URL
+	CodeChallenge bool    // If true, generates a code challenge and adds it to the URL. True by default if no client secret was provided.
 }
 
 // AuthorizationURL generates the URL to redirect the user to the authorization page.
@@ -29,7 +30,7 @@ func (u *Unified) AuthorizationURL(params AuthorizationURLParams) (*Authorizatio
 	var chall *helpers.CodeChallenge
 	var err error
 
-	if params.CodeChallenge {
+	if u.ClientSecret == nil || params.CodeChallenge {
 		chall, err = helpers.GenerateCodeChallenge()
 		if err != nil {
 			return nil, err
@@ -39,6 +40,7 @@ func (u *Unified) AuthorizationURL(params AuthorizationURLParams) (*Authorizatio
 		q.Add("code_challenge_method", chall.Method)
 	}
 
+	q.Add("scope", strings.Join(u.Scopes, ""))
 	q.Add("response_type", "code")
 	q.Add("client_id", u.ClientID)
 	q.Add("redirect_uri", u.RedirectUri)
