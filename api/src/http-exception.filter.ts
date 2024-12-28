@@ -25,9 +25,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
 				priority: status >= 500 ? "high" : "medium",
 			},
 			extra: {
+				status: status,
 				url: request.url,
 				method: request.method,
 				timestamp: eventTimestamp,
+				request: {
+					headers: request.headers,
+					body: request.body,
+					query: request.query,
+				},
 			},
 		});
 
