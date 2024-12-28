@@ -11,6 +11,8 @@ services:
     restart: always
     environment:
       - SENTRY_DSN=${SENTRY_DSN}
+      - SENTRY_SERVER_NAME=${SENTRY_SERVER_NAME:-unified}
+      - SENTRY_RELEASE=${SENTRY_RELEASE:-unified@0.0.5}
 
       - DATABASE_URL=${DATABASE_URL}
 

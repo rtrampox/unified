@@ -29,6 +29,7 @@ async function bootstrap() {
 	}
 	Sentry.init({
 		dsn: process.env.SENTRY_DSN,
+		serverName: process.env.SENTRY_SERVER_NAME,
 	});
 
 	await app.listen(process.env.API_PORT ?? 3000);
