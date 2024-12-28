@@ -21,6 +21,7 @@ type UserClaims = {
 	name?: string;
 	phone?: string | null;
 	phone_verified?: boolean;
+	picture?: string;
 };
 
 export type AccessTokenClaims = {
@@ -178,6 +179,8 @@ export class JWTService {
 					this.claims.given_name = user.firstName;
 					this.claims.family_name = user.lastName;
 					this.claims.preffered_username = user.username;
+					this.claims.name = `${user.firstName} ${user.lastName}`;
+					this.claims.picture = user.picture ?? undefined;
 					break;
 				case "email":
 					this.claims.email = user.email;
