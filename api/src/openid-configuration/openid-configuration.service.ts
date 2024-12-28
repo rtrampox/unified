@@ -12,7 +12,7 @@ export class OpenidConfigurationService {
 		return {
 			issuer: ISSUER_URL ?? "https://localhost:3000",
 			jwks_uri: `${ISSUER_URL}/.well-known/openid-configuration/jwks.json`,
-			authorization_endpoint: `${API_PUBLIC_URL}/v1/oauth/authorize`,
+			authorization_endpoint: `${ISSUER_URL}/oauth/authorize`,
 			token_endpoint: `${API_PUBLIC_URL}/v1/oauth/token`,
 			userinfo_endpoint: `${API_PUBLIC_URL}/v1/oauth/userinfo`,
 			scopes_supported: ["openid", "profile", "email", "phone", "offline_access"],
