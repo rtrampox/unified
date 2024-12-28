@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get, Header } from "@nestjs/common";
 import { OpenidConfigurationService } from "./openid-configuration.service";
 
 import { Public } from "src/guards/auth/auth.decorator";
@@ -16,11 +16,13 @@ export class OpenidConfigurationController {
 
 	@Get()
 	@ApiResponse({ status: 200, type: OpenidConfigurationResponseDto })
+	@Header("Cache-Control", "public, max-age=1800")
 	async getOpenidConfiguration() {
 		return this.openidConfigurationService.getOpenidConfiguration();
 	}
 
 	@Get("jwks.json")
+	@Header("Cache-Control", "public, max-age=1800")
 	@ApiResponse({ status: 200, type: JwksResponseDto })
 	async getJwks() {
 		return this.openidConfigurationService.getJwks();
