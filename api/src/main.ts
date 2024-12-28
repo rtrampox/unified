@@ -28,8 +28,9 @@ async function bootstrap() {
 		console.error("Sentry DSN is not set, skipping Sentry initialization");
 	}
 	Sentry.init({
-		dsn: process.env.SENTRY_DSN,
-		serverName: process.env.SENTRY_SERVER_NAME,
+		dsn: process.env.API_SENTRY_DSN,
+		serverName: process.env.API_SENTRY_SERVER_NAME,
+		release: process.env.API_SENTRY_RELEASE,
 	});
 
 	await app.listen(process.env.API_PORT ?? 3000);

@@ -10,9 +10,9 @@ services:
         - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
     restart: always
     environment:
-      - SENTRY_DSN=${SENTRY_DSN}
-      - SENTRY_SERVER_NAME=${SENTRY_SERVER_NAME:-unified}
-      - SENTRY_RELEASE=${SENTRY_RELEASE:-unified@0.0.5}
+      - API_SENTRY_DSN=${SENTRY_DSN}
+      - API_SENTRY_SERVER_NAME=${SENTRY_SERVER_NAME:-unified}
+      - API_SENTRY_RELEASE=${SENTRY_RELEASE:-unified@0.0.5}
 
       - DATABASE_URL=${DATABASE_URL}
 

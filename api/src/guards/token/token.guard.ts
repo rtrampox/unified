@@ -175,7 +175,7 @@ export class TokenGuard implements CanActivate {
 			throw new BadRequestException("Invalid Authorization header");
 		}
 
-		return { clientId, clientSecret };
+		return { clientId: decodeURIComponent(clientId), clientSecret: decodeURIComponent(clientSecret) };
 	}
 
 	validateCodeChallenge(chal: string, verifier: string, method: "plain" | "S256" | null = "S256") {
