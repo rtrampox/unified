@@ -4,9 +4,14 @@ import { setEvent } from "@/api/custom-fetch";
 import { useSession } from "@/server/session";
 import type { HandleFetch, Handle } from "@sveltejs/kit";
 
-const requiresAuth = ({ pathname }: URL, isLoggedIn: boolean): boolean => {
+const requiresAuth = ({ pathname }: URL): boolean => {
 	const protectedUrls = ["/account", "/oauth/authorize"];
-	return protectedUrls.some((protectedUrl) => pathname.startsWith(protectedUrl)) && !isLoggedIn;
+	return protectedUrls.some((protectedUrl) => pathname.startsWith(protectedUrl));
+};
+
+const isPublicUrl = ({ pathname }: URL): boolean => {
+	const publicUrls = ["/", "/identity/login", "/identity/register", "/.well-known"];
+	return publicUrls.some((publicUrl) => pathname.startsWith(publicUrl));
 };
 
 export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
@@ -23,9 +28,14 @@ export const handleFetch: HandleFetch = async ({ event, request, fetch }) => {
 
 export const handle: Handle = async ({ event, resolve }) => {
 	setEvent(event);
+
+	if (isPublicUrl(event.url)) {
+		return resolve(event);
+	}
+
 	const { isLoggedIn, session } = await useSession(event.request.headers);
 
-	if (requiresAuth(event.url, isLoggedIn)) {
+	if (requiresAuth(event.url) && !isLoggedIn) {
 		throw requiresLogin(event.url);
 	}
 
