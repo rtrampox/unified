@@ -11,7 +11,7 @@ const requiresAuth = ({ pathname }: URL): boolean => {
 
 const isPublicUrl = ({ pathname }: URL): boolean => {
 	// Cannot include "/" in the list of public URLs because it would make every request public.
-	const publicUrls = ["/identity/login", "/identity/register", "/.well-known"];
+	const publicUrls = ["/.well-known"];
 	return publicUrls.some((publicUrl) => pathname.startsWith(publicUrl));
 };
 
