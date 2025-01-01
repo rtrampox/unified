@@ -59,13 +59,13 @@ services:
       args:
         - BACKEND_URL=${BACKEND_URL}
         - INPUT_FILE_PATH=${INPUT_FILE_PATH}
-        - ORIGIN=https://accounts.rtrampox.com.br
-        - PROTOCOL_HEADER=x-forwarded-proto
-        - HOST_HEADER=x-forwarded-host
-        - ADDRESS_HEADER=x-forwarded-for
-        # Allow profile picture uploads, as SvelteKit max size is 512KB
-        - BODY_SIZE_LIMIT=10M
     environment:
+      - ORIGIN=https://accounts.rtrampox.com.br
+      - PROTOCOL_HEADER=x-forwarded-proto
+      - HOST_HEADER=x-forwarded-host
+      - ADDRESS_HEADER=x-forwarded-for
+      # Allow profile picture uploads, as SvelteKit max size is 512KB
+      - BODY_SIZE_LIMIT=10M
       - BACKEND_URL=${BACKEND_URL}
       - INPUT_FILE_PATH=${INPUT_FILE_PATH}
     depends_on:
