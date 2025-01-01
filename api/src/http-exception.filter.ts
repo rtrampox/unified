@@ -5,6 +5,7 @@ import { Request, Response } from "express";
 import { ZodValidationException } from "nestjs-zod";
 import { fromError } from "zod-validation-error";
 import * as Sentry from "@sentry/nestjs";
+import { randomUUID } from "node:crypto";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -15,27 +16,30 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		const response = ctx.getResponse<Response>();
 		const request = ctx.getRequest<Request>();
 		const status = exception.getStatus();
+		let requestId: string = randomUUID();
 
 		const eventTimestamp = new Date().toISOString();
 
-		const requestId = Sentry.captureException(exception, {
-			level: status >= 500 ? "error" : "warning",
-			tags: {
-				environment: process.env.NODE_ENV,
-				priority: status >= 500 ? "high" : "medium",
-			},
-			extra: {
-				status: status,
-				url: request.url,
-				method: request.method,
-				timestamp: eventTimestamp,
-				request: {
-					headers: request.headers,
-					body: request.body,
-					query: request.query,
+		if (status !== 404) {
+			requestId = Sentry.captureException(exception, {
+				level: status >= 500 ? "error" : "warning",
+				tags: {
+					environment: process.env.NODE_ENV,
+					priority: status >= 500 ? "high" : "medium",
 				},
-			},
-		});
+				extra: {
+					status: status,
+					url: request.url,
+					method: request.method,
+					timestamp: eventTimestamp,
+					request: {
+						headers: request.headers,
+						body: request.body,
+						query: request.query,
+					},
+				},
+			});
+		}
 
 		this.logger.error(
 			`HTTP Exception: ${exception.message}, requestId: ${requestId}`,
