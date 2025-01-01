@@ -2,10 +2,14 @@ import { browser } from "$app/environment";
 import { goto } from "$app/navigation";
 import { redirect } from "@sveltejs/kit";
 
+const redirectTo = (url: string) => {
+	return browser ? goto(url, { replaceState: true }) : redirect(303, url);
+};
+
 export function toCallback(url: URL) {
 	const callback = url.searchParams.get("callback");
 
-	if (!callback) return redirect(303, "/account");
+	if (!callback) return redirectTo("/account");
 
 	const to = `/${callback.slice(1)}`;
 
@@ -13,11 +17,7 @@ export function toCallback(url: URL) {
 		throw new Error(`Invalid callback URL. External URLs are not allowed. To: ${to}`);
 	}
 
-	if (browser) {
-		return goto(to, { replaceState: true });
-	}
-
-	return redirect(303, to);
+	return redirectTo(to);
 }
 
 /**
@@ -31,11 +31,7 @@ export function requiresLogin(url: URL) {
 	let search = resolvePrompt(url.search);
 	const encoded = encodeURIComponent(`${url.pathname}${search}`);
 
-	if (browser) {
-		return goto(`/identity/login?callback=${encoded}`, { replaceState: true });
-	}
-
-	return redirect(303, `/identity/login?callback=${encoded}`);
+	return redirectTo(`/identity/login?callback=${encoded}`);
 }
 
 /**
@@ -47,11 +43,7 @@ export function requestLogout(url: URL) {
 
 	const encoded = encodeURIComponent(`${url.pathname}${search}`);
 
-	if (browser) {
-		return goto(`/identity/logout?callback=${encoded}`, { replaceState: true });
-	}
-
-	return redirect(303, `/identity/logout?callback=${encoded}`);
+	return redirectTo(`/identity/logout?callback=${encoded}`);
 }
 
 export function requiresLoginFromCallback(callback: string) {
@@ -59,11 +51,7 @@ export function requiresLoginFromCallback(callback: string) {
 
 	const encoded = encodeURIComponent(callback);
 
-	if (browser) {
-		return goto(`/identity/login?callback=${encoded}`, { replaceState: true });
-	}
-
-	return redirect(303, `/identity/login?callback=${encoded ? encoded : "/identity/login"}`);
+	return redirectTo(`/identity/login?callback=${encoded ? encoded : "/identity/login"}`);
 }
 
 function resolvePrompt(search: string) {
