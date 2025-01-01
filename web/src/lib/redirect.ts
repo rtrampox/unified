@@ -1,11 +1,11 @@
 import { browser } from "$app/environment";
 import { goto } from "$app/navigation";
-import { redirect, type RequestEvent } from "@sveltejs/kit";
+import { redirect } from "@sveltejs/kit";
 
 export function toCallback(url: URL) {
 	const callback = url.searchParams.get("callback");
 
-	if (!callback) return;
+	if (!callback) return redirect(303, "/account");
 
 	const to = `/${callback.slice(1)}`;
 

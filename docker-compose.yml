@@ -63,7 +63,7 @@ services:
       - ORIGIN=https://accounts.rtrampox.com.br
       - PROTOCOL_HEADER=x-forwarded-proto
       - HOST_HEADER=x-forwarded-host
-      - ADDRESS_HEADER=x-forwarded-for
+      - ADDRESS_HEADER=cf-connecting-ip
       # Allow profile picture uploads, as SvelteKit max size is 512KB
       - BODY_SIZE_LIMIT=10M
       - BACKEND_URL=${BACKEND_URL}
