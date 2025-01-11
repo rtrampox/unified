@@ -1,15 +1,14 @@
 services:
   api:
+    restart: always
     networks:
       - unified_internal
       - proxy
     build:
       context: .
-      dockerfile: Dockerfile
-      target: api
+      dockerfile: dockerfile.api
       args:
         - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-    restart: always
     environment:
       - API_SENTRY_DSN=${SENTRY_DSN}
       - API_SENTRY_SERVER_NAME=${SENTRY_SERVER_NAME:-unified}
@@ -56,8 +55,7 @@ services:
       - proxy
     build:
       context: .
-      dockerfile: Dockerfile
-      target: web
+      dockerfile: dockerfile.web
       args:
         - BACKEND_URL=${BACKEND_URL}
         - INPUT_FILE_PATH=${INPUT_FILE_PATH}

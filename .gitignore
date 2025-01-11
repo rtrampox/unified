@@ -1,3 +1,4 @@
+data/
 .env
 swagger.json
 node_modules
