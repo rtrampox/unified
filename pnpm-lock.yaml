@@ -186,6 +186,9 @@ importers:
       svelte-sonner:
         specifier: ^0.3.28
         version: 0.3.28(svelte@5.17.3)
+      zod:
+        specifier: ^3.23.8
+        version: 3.24.1
       zod-validation-error:
         specifier: ^3.4.0
         version: 3.4.0(zod@3.24.1)
@@ -277,9 +280,6 @@ importers:
       vite:
         specifier: ^6.0.0
         version: 6.0.7(@types/node@20.17.12)(jiti@1.21.7)(terser@5.37.0)(yaml@2.7.0)
-      zod:
-        specifier: ^3.23.8
-        version: 3.24.1
 
 packages:
 
