@@ -23,6 +23,7 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
       - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - PUBLIC_KEY_KID=${PUBLIC_KEY_KID}
 
       - AWS_REGION=${AWS_REGION}
       - AWS_BUCKET=${AWS_BUCKET}
@@ -33,6 +34,8 @@ services:
       - CF_EMAIL=${CF_EMAIL}
       - CF_API_KEY=${CF_API_KEY}
       - CF_ZONE_ID=${CF_ZONE_ID}
+
+      - CF_TURNSTILE_SECRET_KEY=${CF_TURNSTILE_SECRET_KEY}
 
       - API_PORT=${API_PORT}
     depends_on:
@@ -60,6 +63,7 @@ services:
         - BACKEND_URL=${BACKEND_URL}
         - INPUT_FILE_PATH=${INPUT_FILE_PATH}
     environment:
+      - PUBLIC_SITE_KEY=${PUBLIC_SITE_KEY}
       - ORIGIN=https://accounts.rtrampox.com.br
       - PROTOCOL_HEADER=x-forwarded-proto
       - HOST_HEADER=x-forwarded-host
