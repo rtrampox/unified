@@ -1,6 +1,9 @@
 {
+  "workspaces": [
+    "api",
+    "web"
+  ],
   "scripts": {
-    "install": "pnpm install",
     "dev": "pnpm --stream -r dev"
   }
 }
