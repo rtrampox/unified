@@ -1,6 +1,11 @@
 {
+  "name": "unified",
+  "version": "1.0.0",
+  "workspaces": [
+    "api",
+    "web"
+  ],
   "scripts": {
-    "install": "pnpm install",
     "dev": "pnpm --stream -r dev"
   }
 }
