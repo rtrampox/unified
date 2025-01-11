@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UsePipes, Req } from "@nestjs/common";
+import { Controller, Post, Body, UsePipes, Req, UseGuards } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 
 import { RegisterService } from "./register.service";
@@ -7,6 +7,7 @@ import { Request } from "express";
 import { Public } from "src/guards/auth/auth.decorator";
 import { Register } from "../entities/register/register.entity";
 import { RegisterUserDto } from "../dto/register/register-user.dto";
+import { CaptchaGuard } from "src/guards/captcha/captcha.guard";
 
 /**
  * RegisterController handles user registration requests.
@@ -25,6 +26,7 @@ export class RegisterController {
 	 */
 	@Post()
 	@UsePipes(ZodValidationPipe)
+	@UseGuards(CaptchaGuard)
 	@ApiCreatedResponse({
 		description: "The record has been successfully created.",
 		type: Register,

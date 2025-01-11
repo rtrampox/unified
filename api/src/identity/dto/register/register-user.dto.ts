@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createZodDto } from "nestjs-zod";
+import { CaptchaDtoSchema } from "src/guards/captcha/dto/captcha.dto";
 
 const registerSchema = z.object({
 	firstName: z.string().min(3),
@@ -16,5 +17,7 @@ const registerSchema = z.object({
 		.refine((value) => value),
 });
 
-export class RegisterUserDto extends createZodDto(registerSchema) {}
+export class RegisterUserDto extends createZodDto(
+	z.object({ ...registerSchema.extend(CaptchaDtoSchema.shape).shape }),
+) {}
 export class UpdateUserDto extends createZodDto(registerSchema.partial()) {}
