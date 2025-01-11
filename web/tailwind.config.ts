@@ -1,12 +1,15 @@
-import { fontFamily } from "tailwindcss/defaultTheme";
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
-const config: Config = {
+const config = {
 	darkMode: ["class"],
 	content: ["./src/**/*.{html,js,svelte,ts}"],
 	safelist: ["dark"],
 	theme: {
+		fontFamily: {
+			sans: ["Geist", "sans-serif"],
+			mono: ["Geist Mono", "monospace"],
+		},
 		container: {
 			center: true,
 			padding: "2rem",
@@ -66,10 +69,6 @@ const config: Config = {
 				md: "calc(var(--radius) - 2px)",
 				sm: "calc(var(--radius) - 4px)",
 			},
-			fontFamily: {
-				sans: ["Geist", ...fontFamily.sans],
-				mono: ["Geist Mono", ...fontFamily.mono],
-			},
 			keyframes: {
 				"accordion-down": {
 					from: { height: "0" },
@@ -97,6 +96,6 @@ const config: Config = {
 		},
 	},
 	plugins: [tailwindcssAnimate],
-};
+} satisfies Config;
 
 export default config;

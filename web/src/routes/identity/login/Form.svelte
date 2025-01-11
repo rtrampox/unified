@@ -64,7 +64,7 @@
 		}
 
 		return () => {
-			reset();
+			reset?.();
 		};
 	});
 </script>
