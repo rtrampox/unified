@@ -172,7 +172,6 @@
 					siteKey={env.PUBLIC_SITE_KEY}
 					theme="dark"
 					language="en"
-					cData={$formSF.email}
 					action="user-non_otp-login"
 					bind:reset
 					on:callback={() => (isChecking = false)}
