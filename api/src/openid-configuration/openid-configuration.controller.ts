@@ -7,14 +7,14 @@ import { OpenidConfigurationResponseDto } from "./entities/openid-configuration.
 import { JwksResponseDto } from "./entities/jwks.entitties";
 
 @Controller({
-	path: ".well-known/openid-configuration",
+	path: ".well-known",
 	version: "",
 })
 @Public()
 export class OpenidConfigurationController {
 	constructor(private readonly openidConfigurationService: OpenidConfigurationService) {}
 
-	@Get()
+	@Get("openid-configuration")
 	@ApiResponse({ status: 200, type: OpenidConfigurationResponseDto })
 	@Header("Cache-Control", "public, max-age=1800")
 	async getOpenidConfiguration() {
