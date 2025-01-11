@@ -1,6 +1,6 @@
 {
-    "scripts": {
-      "install": "pnpm install",
-      "dev": "pnpm -r dev"
-    }
+  "scripts": {
+    "install": "pnpm install",
+    "dev": "pnpm --stream -r dev"
   }
+}

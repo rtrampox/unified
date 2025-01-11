@@ -15,17 +15,21 @@ export interface ATokenRequest extends Request {
 export class AccessTokenGuard implements CanActivate {
 	constructor(private readonly tokenService: AccessTokenService) {}
 
+	private error = new UnauthorizedException("Missing or invalid access token", {
+		cause: "FROM_GUARD",
+	});
+
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const req = context.switchToHttp().getRequest<ATokenRequest>();
 
 		const [type, token] = req.headers.authorization?.split(" ") ?? [];
 		if (type !== "Bearer" || !token) {
-			throw new UnauthorizedException("Missing or invalid access token");
+			throw this.error;
 		}
 
 		const claims = await this.tokenService.decrypt<AccessTokenClaims>(token);
 		if (!claims) {
-			throw new UnauthorizedException("Missing or invalid access token");
+			throw this.error;
 		}
 
 		req.token = { token, claims };

@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from "@nestjs/common";
+import { CanActivate, ExecutionContext, HttpException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { Reflector } from "@nestjs/core";
 import { Request } from "express";
 import { DBService } from "src/providers/db/db.service";
@@ -8,11 +8,11 @@ import { SessionService } from "src/providers/sessions/session.service";
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-	constructor(
-		private readonly db: DBService,
-		private sessions: SessionService,
-		private reflector: Reflector,
-	) {}
+	constructor(private readonly db: DBService, private sessions: SessionService, private reflector: Reflector) {}
+
+	private error = new UnauthorizedException("Unauthorized", {
+		cause: "FROM_GUARD",
+	});
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
@@ -26,30 +26,26 @@ export class AuthGuard implements CanActivate {
 		const req = context.switchToHttp().getRequest<IAuthRequest>();
 		const ssid = this.extractSessionId(req);
 		if (!ssid) {
-			throw new UnauthorizedException("Unauthorized");
+			throw this.error;
 		}
 
-		try {
-			const [sess, ok] = await this.sessions.get(ssid);
-			if (!ok) {
-				throw new UnauthorizedException("Unauthorized");
-			}
-
-			const user = await this.db.user.findUnique({
-				where: { id: sess.userId },
-				select: authGuardUserSelect,
-			});
-			if (!user) {
-				throw new UnauthorizedException("Unauthorized");
-			}
-
-			req.auth = {
-				session: sess,
-				user: user,
-			};
-		} catch {
-			throw new UnauthorizedException("Unauthorized");
+		const [sess, ok] = await this.sessions.get(ssid);
+		if (!ok) {
+			throw this.error;
 		}
+
+		const user = await this.db.user.findUnique({
+			where: { id: sess.userId },
+			select: authGuardUserSelect,
+		});
+		if (!user) {
+			throw this.error;
+		}
+
+		req.auth = {
+			session: sess,
+			user: user,
+		};
 
 		return true;
 	}

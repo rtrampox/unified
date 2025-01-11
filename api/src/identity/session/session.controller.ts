@@ -11,7 +11,6 @@ export class SessionController {
 
 	@Get()
 	@ApiOkResponse({
-		description: "The record has been successfully created.",
 		type: SessionResponse,
 	})
 	async getSession(@Session() session: ReqSession): Promise<SessionResponse> {
