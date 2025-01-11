@@ -33,6 +33,7 @@ export const actions: Actions = {
 
 		const { data, status, headers } = await loginUser({
 			identity: { email: form.data.email, password: form.data.password, trust: form.data.trust },
+			captcha: { token: form.data["cf-turnstile-response"] },
 		});
 
 		if (status !== 201 && status !== 200) {

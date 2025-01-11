@@ -2,7 +2,8 @@
 	import * as Form from "$lib/components/ui/form";
 	import * as InputOTP from "$lib/components/ui/input-otp";
 
-	import SuperDebug, { superForm } from "sveltekit-superforms";
+	import { Turnstile } from "svelte-turnstile";
+	import { superForm } from "sveltekit-superforms";
 	import { Input } from "@/components/ui/input";
 	import type { ActionData, PageData } from "./$types";
 	import Button from "@/components/ui/button/button.svelte";
@@ -12,6 +13,7 @@
 	import { toast } from "svelte-sonner";
 	import { cn } from "@/utils";
 	import { slide } from "svelte/transition";
+	import { env } from "$env/dynamic/public";
 
 	type Props = {
 		data: PageData;
@@ -31,6 +33,13 @@
 	let lastEmailInput = $state($formSF.email);
 
 	let formMessage = $derived(form?.message);
+
+	let isChecking = $state(true);
+
+	let reset = $state(() => {
+		otp = false;
+		isChecking = true;
+	});
 
 	$effect(() => {
 		if (form?.otp) {
@@ -53,6 +62,10 @@
 		if (formMessage) {
 			toast.error(formMessage);
 		}
+
+		return () => {
+			reset();
+		};
 	});
 </script>
 
@@ -62,7 +75,8 @@
 			method="POST"
 			action={form?.otp ? "?/loginOtp" : "?/login"}
 			use:enhance
-			class="flex w-full flex-col gap-1">
+			class="flex w-full flex-col gap-1"
+		>
 			<Form.Field form={forms} name="email">
 				<Form.Control>
 					{#snippet children({ props })}
@@ -70,7 +84,8 @@
 						<Input
 							{...props}
 							class="h-12 w-full border-zinc-200 bg-zinc-50 transition-all dark:border-zinc-700 dark:bg-zinc-950/50"
-							bind:value={$formSF.email} />
+							bind:value={$formSF.email}
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -84,7 +99,8 @@
 							{...props}
 							type="password"
 							class="h-12 w-full border-zinc-200 bg-zinc-50 transition-all dark:border-zinc-700 dark:bg-zinc-950/50"
-							bind:value={$formSF.password} />
+							bind:value={$formSF.password}
+						/>
 					{/snippet}
 				</Form.Control>
 				<Form.FieldErrors />
@@ -102,8 +118,9 @@
 									bind:value={$formSF.code}
 									class={cn(
 										"flex h-12 w-full items-center justify-center bg-zinc-50 ",
-										"rounded-lg border border-input p-7 transition-all dark:border-zinc-700 dark:bg-zinc-950/50",
-									)}>
+										"border-input rounded-lg border p-7 transition-all dark:border-zinc-700 dark:bg-zinc-950/50",
+									)}
+								>
 									{#snippet children({ cells })}
 										<InputOTP.Group>
 											{#each cells.slice(0, 3) as cell}
@@ -143,19 +160,32 @@
 
 					<a
 						href="/identity/forgot"
-						class="text-sm font-medium text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white">
+						class="text-sm font-medium text-zinc-700 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+					>
 						Forgot password?
 					</a>
 				</div>
 
+				<Turnstile
+					class="w-full"
+					size="flexible"
+					siteKey={env.PUBLIC_SITE_KEY}
+					theme="dark"
+					language="en"
+					cData={$formSF.email}
+					action="user-non_otp-login"
+					bind:reset
+					on:callback={() => (isChecking = false)}
+				/>
+
 				<input
 					hidden
 					name="callback"
-					value={new URLSearchParams(data.searchParams).get("callback")} />
+					value={new URLSearchParams(data.searchParams).get("callback")}
+				/>
 
-				<Button type="submit" class="w-full" isLoading={$submitting}>Continue</Button>
+				<Button type="submit" class="w-full" isLoading={$submitting || isChecking}>Continue</Button>
 			</div>
 		</form>
 	</div>
 </div>
-<SuperDebug data={$formSF} />

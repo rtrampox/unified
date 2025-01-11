@@ -3,7 +3,7 @@
 	import Form from "./Form.svelte";
 	import { writable } from "svelte/store";
 	import { requestLogout, toCallback } from "@/redirect";
-	import { page } from "$app/stores";
+	import { page } from "$app/state";
 
 	const loading = writable(false);
 
@@ -16,7 +16,7 @@
 			<div class="space-y-2 text-center">
 				<h1 class="flex flex-col text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">
 					Welcome back, {data.session?.user.firstName}
-					<span class="text-sm font-normal text-muted-foreground">{data.session?.user.email}</span>
+					<span class="text-muted-foreground text-sm font-normal">{data.session?.user.email}</span>
 				</h1>
 				<p class="text-zinc-500 dark:text-zinc-300">
 					It looks like that you&apos;re already logged in
@@ -30,12 +30,14 @@
 					class="w-full"
 					type="submit"
 					isLoading={$loading}
-					onclick={() => toCallback($page.url)}>Continue with this account</Button>
+					onclick={() => toCallback(page.url)}>Continue with this account</Button
+				>
 				<form method="POST" action="?/logout">
 					<Button
 						variant="ringHoverDestructive"
-						onclick={() => requestLogout($page.url)}
-						class="w-full">Logout</Button>
+						onclick={() => requestLogout(page.url)}
+						class="w-full">Logout</Button
+					>
 				</form>
 			</div>
 		</div>
@@ -58,11 +60,7 @@
 
 		<footer class="p-8 pt-0 text-center">
 			<p class="text-sm text-zinc-500 dark:text-zinc-400">
-				This page is protected by reCAPTCHA and Google's
-				<a href="https://policies.google.com/privacy">Privacy Policy</a>
-				and
-				<a href="https://policies.google.com/terms">Terms of Service</a>
-				apply.
+				This page is protected by Cloudflare's Turnstile.
 			</p>
 		</footer>
 	</main>
