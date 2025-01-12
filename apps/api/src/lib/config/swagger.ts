@@ -23,8 +23,6 @@ export const bootstrapSwagger = (app: INestApplication) => {
 
 	const documentFactory = () => SwaggerModule.createDocument(app, config, options);
 
-	fs.writeFileSync(path.resolve(path.join("..", "swagger.json")), JSON.stringify(documentFactory(), null, 2));
-
 	if (!process.env.DISABLE_SWAGGER && process.env.DISABLE_SWAGGER !== "true") {
 		SwaggerModule.setup("swagger", app, documentFactory, {
 			jsonDocumentUrl: "swagger/json",
