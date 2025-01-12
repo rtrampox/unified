@@ -1,6 +1,7 @@
 {
-	"name": "unified-frontend",
-	"version": "0.0.1",
+	"name": "web",
+	"version": "1.0.0",
+	"private": true,
 	"type": "module",
 	"scripts": {
 		"start": "node build",
