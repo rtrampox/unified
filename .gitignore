@@ -1,4 +1,6 @@
 data/
 .env
+.turbo
+.idea
 swagger.json
 node_modules

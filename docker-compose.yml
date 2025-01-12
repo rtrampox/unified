@@ -6,7 +6,7 @@ services:
       - proxy
     build:
       context: .
-      dockerfile: dockerfile.api
+      dockerfile: ./apps/api/dockerfile
       args:
         - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
     environment:
@@ -58,7 +58,7 @@ services:
       - proxy
     build:
       context: .
-      dockerfile: dockerfile.web
+      dockerfile: ./apps/web/dockerfile
       args:
         - BACKEND_URL=${BACKEND_URL}
         - INPUT_FILE_PATH=${INPUT_FILE_PATH}
