@@ -11,7 +11,7 @@ import { configConstants } from "src/lib/config/constants";
 export class RegisterService {
 	constructor(private readonly db: DBService, private sessions: SessionService) {}
 
-	async create({ password, ...input }: RegisterUserDto, req: Request): Promise<Register> {
+	async create({ password, captcha, ...input }: RegisterUserDto, req: Request): Promise<Register> {
 		const emailExists = await this.db.user.findFirst({
 			where: { email: { equals: input.email, mode: "insensitive" } },
 		});
