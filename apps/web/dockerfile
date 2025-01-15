@@ -58,6 +58,9 @@ FROM alpine AS runner
 
 WORKDIR /app
 
+ARG NODE_ENV=production
+ENV NODE_ENV=${NODE_ENV}
+
 # Don't run production as root
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nodejs
