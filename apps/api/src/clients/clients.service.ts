@@ -80,7 +80,7 @@ export class ClientsService {
 				select: this.clientSelect,
 			});
 			if (!client) {
-				throw new ConflictException(`Client with id ${id} not found`);
+				throw new NotFoundException(`Client with id ${id} not found`);
 			}
 
 			const secret = this.generateSecret();
