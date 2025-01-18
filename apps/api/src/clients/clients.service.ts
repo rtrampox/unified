@@ -3,7 +3,6 @@ import { CreateClientDto, UpdateClientDto } from "./dto/client.dto";
 import { ReqSession } from "src/guards/auth/auth.decorator";
 import { DBService } from "src/providers/db/db.service";
 import { passwordService } from "src/providers/password";
-import { createId } from "@paralleldrive/cuid2";
 import { Prisma } from "@prisma/client";
 
 @Injectable()
@@ -30,12 +29,9 @@ export class ClientsService {
 	};
 
 	private generateSecret() {
-		return `ucs|${Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString("base64url")}`;
+		return `UCS-${Buffer.from(crypto.getRandomValues(new Uint8Array(32))).toString("base64url")}`;
 	}
 
-	/**
-	 * @throws ConflictException
-	 */
 	async createClient(body: CreateClientDto, session: ReqSession) {
 		const exists = await this.db.client.findFirst({
 			where: { userId: session.user.id, name: body.name },
