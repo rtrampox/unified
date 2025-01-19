@@ -1,11 +1,20 @@
+import { IsNotEmpty, IsObject, IsString, ValidateNested } from "class-validator";
 import { ApiProperty } from "@nestjs/swagger";
+import { Type } from "class-transformer";
 import { z } from "zod";
 
-export class CaptchaDto {
+class Token {
 	@ApiProperty()
-	captcha: {
-		token: string;
-	};
+	@IsString()
+	@IsNotEmpty()
+	token: string;
+}
+
+export class CaptchaDto {
+	@IsObject()
+	@ValidateNested()
+	@Type(() => Token)
+	captcha: Token;
 }
 
 export const CaptchaDtoSchema = z.object({

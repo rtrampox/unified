@@ -65,7 +65,7 @@ export class LoginService {
 		} satisfies Login);
 	}
 
-	async create({ identity: { password, ...input } }: LoginUserDto, req: Request, res: Response) {
+	async login({ identity: { password, ...input } }: LoginUserDto, req: Request, res: Response) {
 		const tdid = this.trustService.readCookie(req);
 		const user = await this.db.user.findUnique({
 			where: { email: input.email },

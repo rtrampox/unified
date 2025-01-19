@@ -1,25 +1,58 @@
+import { OmitType, PartialType } from "@nestjs/swagger";
 import { Scopes } from "@prisma/client";
-import { createZodDto } from "nestjs-zod";
+import { Transform, TransformFnParams } from "class-transformer";
 import { z } from "zod";
+import {
+	IsArray,
+	IsBoolean,
+	IsEmail,
+	IsEnum,
+	IsNotEmpty,
+	IsOptional,
+	IsString,
+	IsUrl,
+	MinLength,
+} from "class-validator";
 
 export const scopesEnum = z.enum(["openid", "profile", "email", "offline_access"]);
 export const responseTypeEnum = z.enum(["code", /* 'token', */ "id_token"]);
 
-const createSchema = z.object({
-	name: z.string(),
-	picture: z.string().url().optional(),
+export class CreateClientDto {
+	@IsNotEmpty()
+	@IsString()
+	name: string;
 
-	redirectUri: z.array(z.string().url()),
-	scopes: z.array(scopesEnum.transform((v) => v.toLowerCase() as Scopes)),
+	@IsUrl()
+	@IsOptional()
+	picture?: string;
 
-	contactEmail: z.string().email(),
+	@MinLength(1)
+	@IsArray()
+	@IsUrl({}, { each: true })
+	redirectUri: string[];
 
-	privacyPolicyUrl: z.string().url().optional(),
-	termsUrl: z.string().url().optional(),
+	@MinLength(1)
+	@IsArray()
+	@IsString({ each: true })
+	@IsEnum(Scopes, { each: true })
+	@Transform(({ value }: TransformFnParams) => value.map((v) => v.toLowerCase()) as Scopes)
+	scopes: Scopes[] = ["openid"];
 
-	enabled: z.boolean().optional().default(true),
-});
+	@IsNotEmpty()
+	@IsEmail()
+	contactEmail: string;
 
-export class CreateClientDto extends createZodDto(createSchema) {}
+	@IsUrl()
+	@IsOptional()
+	privacyPolicyUrl?: string;
 
-export class UpdateClientDto extends createZodDto(createSchema.omit({ enabled: true }).partial()) {}
+	@IsUrl()
+	@IsOptional()
+	termsUrl?: string;
+
+	@IsOptional()
+	@IsBoolean()
+	enabled?: boolean = true;
+}
+
+export class UpdateClientDto extends PartialType(OmitType(CreateClientDto, ["enabled"])) {}

@@ -1,16 +1,25 @@
-import { z } from "zod";
-import { createZodDto } from "nestjs-zod";
+import { IsNotEmpty, IsObject, MaxLength, MinLength, ValidateNested } from "class-validator";
+import { Type } from "class-transformer";
+import { Identity } from "./identity.dto";
 
-const schema = z.object({
-	otp: z.object({
-		code: z.string().min(6).max(6),
-		type: z.string(),
-	}),
-	identity: z.object({
-		email: z.string().email(),
-		password: z.string().min(8),
-		trust: z.boolean().optional().default(false),
-	}),
-});
+class Otp {
+	@IsNotEmpty()
+	@MinLength(6)
+	@MaxLength(6)
+	code: string;
 
-export class ContinueLoginDto extends createZodDto(schema) {}
+	@IsNotEmpty()
+	type: string;
+}
+
+export class ContinueLoginDto {
+	@IsObject()
+	@ValidateNested()
+	@Type(() => Otp)
+	otp: Otp;
+
+	@IsObject()
+	@ValidateNested()
+	@Type(() => Identity)
+	identity: Identity;
+}

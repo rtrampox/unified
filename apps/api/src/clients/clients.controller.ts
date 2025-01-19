@@ -1,14 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, UsePipes, Put } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param, UsePipes, Put } from "@nestjs/common";
 import { ClientsService } from "./clients.service";
 import { CreateClientDto, UpdateClientDto } from "./dto/client.dto";
-import { ZodValidationPipe } from "nestjs-zod";
 import { ApiResponse } from "@nestjs/swagger";
 import { ClientOkResponse, ClientOkResponseWithSecret } from "./entities/client.entity";
 import { ApiErrorResponses } from "src/lib/apiError.decorator";
 import { ReqSession, Session } from "src/guards/auth/auth.decorator";
+import { ValidationPipe } from "@app/common/pipes/validation.pipe";
 
 @Controller("clients")
-@UsePipes(ZodValidationPipe)
+@UsePipes(new ValidationPipe())
 export class ClientsController {
 	constructor(private readonly clientsService: ClientsService) {}
 

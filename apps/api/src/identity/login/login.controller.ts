@@ -1,7 +1,7 @@
 import { Controller, Post, Body, UsePipes, Req, Res, Delete, HttpCode, UseGuards } from "@nestjs/common";
 import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ValidationPipe } from "@app/common/pipes/validation.pipe";
 
-import { ZodValidationPipe } from "nestjs-zod";
 import { Request, Response } from "express";
 import { LoginService } from "./login.service";
 import { Public } from "src/guards/auth/auth.decorator";
@@ -16,6 +16,7 @@ import { CaptchaGuard } from "src/guards/captcha/captcha.guard";
 @Public()
 @ApiTags("Identity")
 @Controller("identity")
+@UsePipes(new ValidationPipe())
 export class LoginController {
 	constructor(private readonly service: LoginService) {}
 
@@ -34,15 +35,14 @@ export class LoginController {
 	 * @returns The user identity details.
 	 */
 	@Post("login")
-	@UsePipes(ZodValidationPipe)
 	@UseGuards(CaptchaGuard)
 	@ApiCreatedResponse({
 		description: "The user has been successfully logged in.",
 		type: Login,
 	})
 	@ApiOperation({ operationId: "loginUser" })
-	create(@Body() input: LoginUserDto, @Req() req: Request, @Res() res: Response) {
-		return this.service.create(input, req, res);
+	login(@Body() input: LoginUserDto, @Req() req: Request, @Res() res: Response) {
+		return this.service.login(input, req, res);
 	}
 
 	/**
@@ -53,7 +53,6 @@ export class LoginController {
 	 */
 	@ApiOperation({ operationId: "otpLoginUser" })
 	@Post("login/continue")
-	@UsePipes(ZodValidationPipe)
 	@ApiOkResponse({
 		description: "The user has been successfully logged in.",
 		type: Login,
