@@ -3,9 +3,10 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsObject } from "class-validator";
 import { Request, Response } from "express";
 import { ZodValidationException } from "nestjs-zod";
-import { fromError } from "zod-validation-error";
+import { fromError, ValidationError } from "zod-validation-error";
 import * as Sentry from "@sentry/nestjs";
 import { randomUUID } from "node:crypto";
+import { exec } from "node:child_process";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -20,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
 		const eventTimestamp = new Date().toISOString();
 
-		if (status !== 404 || exception.cause !== "NO_SESSION") {
+		if (status !== 404 && status !== 400 && status !== 422 && exception.cause !== "NO_SESSION") {
 			requestId = Sentry.captureException(exception, {
 				level: status >= 500 ? "error" : "warning",
 				tags: {
@@ -53,7 +54,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
 				timestamp: eventTimestamp,
 				path: request.url,
 				requestId: requestId,
-				errors: undefined,
+				// @ts-expect-error exception does not have a response property
+				errors: exception.getResponse()?.errors || exception.message,
 			},
 		};
 
@@ -61,7 +63,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 			const errors = exception.getZodError();
 			const error = fromError(errors);
 
-			responseBody.statusCode = 400;
+			responseBody.statusCode = 422;
 			responseBody.error.errors = error.toString();
 			responseBody.error.message = "Validation failed";
 		}
@@ -69,7 +71,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 		return response
 			.setHeaders(
 				new Headers({
-					"X-Rtrampox-Request-Id": requestId,
+					"X-Request-Id": requestId,
 				}),
 			)
 			.status(status)
@@ -92,6 +94,10 @@ class errorsObject {
 
 	@ApiProperty()
 	requestId: string;
+
+	constructor(data: Partial<errorsObject>) {
+		Object.assign(this, data);
+	}
 }
 
 export class HttpExceptionEntity {
@@ -101,4 +107,9 @@ export class HttpExceptionEntity {
 	@ApiProperty({ type: errorsObject })
 	@IsObject()
 	error: errorsObject;
+
+	constructor(statusCode: number, error: Partial<errorsObject>) {
+		this.statusCode = statusCode;
+		this.error = new errorsObject(error);
+	}
 }
