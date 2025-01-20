@@ -32,12 +32,10 @@ const getUrl = (contextUrl: string): URL => {
 
 // NOTE: Add headers
 const getHeaders = (headers?: HeadersInit): HeadersInit => {
-	const newH = new Headers({
-		...headers,
-	});
+	const newH = new Headers(headers);
 
 	if (!browser) {
-		newH.set("User-Agent", "sveltejs/kit");
+		newH.set("User-Agent", "sveltejs/kit; server-to-server");
 	}
 
 	return newH;
