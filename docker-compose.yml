@@ -64,10 +64,10 @@ services:
         - INPUT_FILE_PATH=${INPUT_FILE_PATH}
     environment:
       - PUBLIC_SITE_KEY=${PUBLIC_SITE_KEY}
-      - ORIGIN=https://accounts.rtrampox.com.br
+      - ORIGIN=https://accounts.rtrampox.dev
       - PROTOCOL_HEADER=x-forwarded-proto
       - HOST_HEADER=x-forwarded-host
-      - ADDRESS_HEADER=cf-connecting-ip
+      - ADDRESS_HEADER=x-forwarded-for
       # Allow profile picture uploads, as SvelteKit max size is 512KB
       - BODY_SIZE_LIMIT=10M
       - BACKEND_URL=${BACKEND_URL}
