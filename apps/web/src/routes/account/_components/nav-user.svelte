@@ -5,12 +5,8 @@
 	import { useSidebar } from "$lib/components/ui/sidebar/index.js";
 	import type { SessionResponseUser } from "@/api";
 	import { requestLogout } from "@/redirect";
-	import BadgeCheck from "lucide-svelte/icons/badge-check";
-	import Bell from "lucide-svelte/icons/bell";
 	import ChevronsUpDown from "lucide-svelte/icons/chevrons-up-down";
-	import CreditCard from "lucide-svelte/icons/credit-card";
 	import LogOut from "lucide-svelte/icons/log-out";
-	import Sparkles from "lucide-svelte/icons/sparkles";
 
 	let { user }: { user: SessionResponseUser } = $props();
 	const sidebar = useSidebar();
@@ -34,8 +30,8 @@
 						</Avatar.Root>
 						<div class="grid flex-1 text-left text-sm leading-tight">
 							<span class="truncate font-semibold">{user.firstName} {user.lastName}</span>
-							<span class="text-muted-foreground truncate">@{user.username}</span>
-							<span class="text-muted-foreground truncate text-sm">{user.email}</span>
+							<span class="truncate text-muted-foreground">@{user.username}</span>
+							<span class="truncate text-sm text-muted-foreground">{user.email}</span>
 						</div>
 						<ChevronsUpDown class="ml-auto size-4" />
 					</Sidebar.MenuButton>
@@ -51,7 +47,10 @@
 					<div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 						<Avatar.Root class="h-8 w-8 rounded-lg">
 							<Avatar.Image src={user.picture} alt={user.firstName} />
-							<Avatar.Fallback class="rounded-lg">CN</Avatar.Fallback>
+							<Avatar.Fallback class="rounded-lg">
+								{user.firstName[0]}
+								{user.lastName[0]}
+							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid flex-1 text-left text-sm leading-tight">
 							<span class="truncate font-semibold">{user.firstName} {user.lastName}</span>
@@ -59,29 +58,6 @@
 						</div>
 					</div>
 				</DropdownMenu.Label>
-				<DropdownMenu.Separator />
-				<DropdownMenu.Group>
-					<DropdownMenu.Item>
-						<Sparkles />
-						Upgrade to Pro
-					</DropdownMenu.Item>
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator />
-				<DropdownMenu.Group>
-					<DropdownMenu.Item>
-						<BadgeCheck />
-						Account
-					</DropdownMenu.Item>
-					<DropdownMenu.Item>
-						<CreditCard />
-						Billing
-					</DropdownMenu.Item>
-					<DropdownMenu.Item>
-						<Bell />
-						Notifications
-					</DropdownMenu.Item>
-				</DropdownMenu.Group>
-				<DropdownMenu.Separator />
 				<DropdownMenu.Item onclick={() => requestLogout(new URL(window.location.href))}>
 					<LogOut />
 					Log out
