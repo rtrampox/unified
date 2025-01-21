@@ -2,6 +2,6 @@ import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ locals }) => {
 	return {
-		user: locals.session.session,
+		user: locals.session.user,
 	};
 };

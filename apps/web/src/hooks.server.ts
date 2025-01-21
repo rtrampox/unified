@@ -34,21 +34,23 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
-	const { isLoggedIn, session } = await useSession(event.request.headers);
+	const { isLoggedIn, session, user } = await useSession(event.request.headers);
 
 	if (requiresAuth(event.url) && !isLoggedIn) {
 		throw requiresLogin(event.url);
 	}
 
-	if (isLoggedIn && session) {
+	if (isLoggedIn) {
 		event.locals.session = {
-			isLoggedIn: true,
+			isLoggedIn,
 			session,
+			user,
 		};
 	} else {
 		event.locals.session = {
-			isLoggedIn: false,
+			isLoggedIn,
 			session: null,
+			user: null,
 		};
 	}
 

@@ -1,16 +1,18 @@
-import { getSession, type SessionResponse } from "@/api";
+import { getSession, type SessionResponse, type SessionResponseUser } from "@/api";
 
 export type Session =
 	| {
 			session: SessionResponse;
+			user: SessionResponseUser;
 			isLoggedIn: true;
 	  }
 	| {
 			isLoggedIn: false;
+			user: null;
 			session: null;
 	  };
 
-export async function useSession(headers: Headers) {
+export async function useSession(headers: Headers): Promise<Session> {
 	const cookieH = headers.get("cookie") ?? "";
 
 	const response = await getSession({
@@ -21,8 +23,16 @@ export async function useSession(headers: Headers) {
 	});
 
 	const { data, status } = response;
-	return {
-		session: status === 200 ? (data as SessionResponse) : null,
-		isLoggedIn: status === 200,
-	};
+
+	return status === 200
+		? {
+				session: data as SessionResponse,
+				user: data.user,
+				isLoggedIn: true,
+			}
+		: {
+				session: null,
+				user: null,
+				isLoggedIn: false,
+			};
 }

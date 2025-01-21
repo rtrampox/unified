@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { SessionResponseUser } from "@/api";
 	import * as Sidebar from "$lib/components/ui/sidebar";
 	import * as Breadcrumb from "@/components/ui/breadcrumb";
 	import { activeTab, tabs, type Tabs } from "./store";
@@ -7,7 +8,9 @@
 	import { fly } from "svelte/transition";
 	import AppSidebar from "./_components/app-sidebar.svelte";
 
-	let { children, data } = $props();
+	let { children } = $props();
+
+	let user = $state<SessionResponseUser>(page.data.user!);
 
 	$effect(() => {
 		$activeTab = page.route.id!;
@@ -19,9 +22,7 @@
 </svelte:head>
 
 <Sidebar.Provider>
-	{#if data.user}
-		<AppSidebar user={data.user} />
-	{/if}
+	<AppSidebar {user} />
 	<Sidebar.Inset>
 		<header
 			class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12"
@@ -42,7 +43,7 @@
 				</Breadcrumb.Root>
 			</div>
 		</header>
-		{#key data.url}
+		{#key $activeTab}
 			<div
 				in:fly={{ x: -200, delay: 200, duration: 200 }}
 				out:fly={{ duration: 200 }}
