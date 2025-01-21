@@ -42,7 +42,7 @@ services:
       - db
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.unified_backend.rule=Host(`apis.rtrampox.com.br`) && PathPrefix(`/unified/`) || Host(`apis.rtrampox.cloud`) && PathPrefix(`/unified/`)"
+      - "traefik.http.routers.unified_backend.rule=Host(`apis.rtrampox.com.br`) && PathPrefix(`/unified/`) || Host(`apis.rtrampox.dev`) && PathPrefix(`/unified/`)"
       - "traefik.http.middlewares.pathPrefix_strip.stripprefix.prefixes=/unified"
       - "traefik.http.routers.unified_backend.middlewares=pathPrefix_strip@docker,gzip"
 
@@ -76,7 +76,7 @@ services:
       - api
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.unified_frontend.rule=Host(`accounts.rtrampox.com.br`)"
+      - "traefik.http.routers.unified_frontend.rule=Host(`accounts.rtrampox.com.br`) && Host(`accounts.rtrampox.dev`)`"
       - "traefik.http.routers.unified_frontend.entrypoints=https"
       - "traefik.http.routers.unified_frontend.tls=true"
       - "traefik.http.routers.unified_frontend.middlewares=gzip"
