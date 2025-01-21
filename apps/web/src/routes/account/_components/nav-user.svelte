@@ -19,10 +19,10 @@
 				{#snippet child({ props })}
 					<Sidebar.MenuButton
 						size="xl"
-						class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+						class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground group-data-[collapsible=icon]:!p-0"
 						{...props}
 					>
-						<Avatar.Root class="h-8 w-8 rounded-lg">
+						<Avatar.Root class="size-8 rounded-lg">
 							<Avatar.Image src={user.picture} alt={user.firstName} />
 							<Avatar.Fallback class="rounded-lg"
 								>{user.firstName[0]} {user.lastName[0]}</Avatar.Fallback
