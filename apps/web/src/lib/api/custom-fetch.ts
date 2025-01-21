@@ -1,6 +1,8 @@
 import { browser } from "$app/environment";
 import type { RequestEvent } from "@sveltejs/kit";
 import { env } from "$env/dynamic/private";
+import { toast } from "svelte-sonner";
+import type { HttpExceptionEntity } from ".";
 
 // NOTE: Supports cases where `content-type` is other than `json`
 const getBody = <T>(c: Response | Request): Promise<T> => {
@@ -62,8 +64,16 @@ export const customFetch = async <T>(url: string, options: RequestInit): Promise
 	}
 
 	const request = new Request(requestUrl, requestInit);
+
 	const response = await FETCH(request);
 	const data = await getBody<T>(response);
 
-	return { status: response.status, data, headers: response.headers } as T;
+	const status = response.status;
+	const headers = response.headers;
+
+	if (browser && status >= 400) {
+		toast.error((data as HttpExceptionEntity).error.message);
+	}
+
+	return { status, data, headers } as T;
 };

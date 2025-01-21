@@ -47,7 +47,7 @@ export function ApiErrorResponses(
 			{
 				status: HttpStatus.INTERNAL_SERVER_ERROR,
 				description: "Internal Server Error",
-				type: ErrorResponseDto,
+				type: HttpExceptionEntity,
 			},
 		];
 		[...defaultErrors, ...customErrors].forEach((error) => {

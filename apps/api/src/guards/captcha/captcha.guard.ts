@@ -19,6 +19,15 @@ type CFTurnstile = {
 	metadata: Object;
 };
 
+type GRecaptcha = {
+	success: boolean; // whether this request was a valid reCAPTCHA token for your site
+	score: number; // the score for this request (0.0 - 1.0)
+	action: string; // the action name for this request (important to verify)
+	challenge_ts: string; // timestamp of the challenge load (ISO format yyyy-MM-dd'T'HH:mm:ssZZ)
+	hostname: string; // the hostname of the site where the reCAPTCHA was solved
+	"error-codes": string[]; // optional
+};
+
 @Injectable()
 export class CaptchaGuard implements CanActivate {
 	private readonly logger = new Logger(CaptchaGuard.name);
@@ -38,8 +47,15 @@ export class CaptchaGuard implements CanActivate {
 			});
 		}
 
-		// Validate the captcha token
-		const valid = await this.ValidateCaptcha(token);
+		let valid = false;
+
+		if (req.body["captcha"]?.["type"] === "recaptcha") {
+			valid = await this.ValidateGRecaptcha(token);
+		} else if (req.body["captcha"]?.["type"] === "turnstile") {
+			valid = await this.ValidateCFCaptcha(token);
+		} else {
+			return false;
+		}
 
 		req.captcha = { valid, token };
 
@@ -52,7 +68,7 @@ export class CaptchaGuard implements CanActivate {
 		return true;
 	}
 
-	private async ValidateCaptcha(token: string): Promise<boolean> {
+	private async ValidateCFCaptcha(token: string): Promise<boolean> {
 		try {
 			const formData = new FormData();
 
@@ -64,15 +80,37 @@ export class CaptchaGuard implements CanActivate {
 				formData,
 			);
 
+			this.logger.debug("Captcha validation response", data);
 			if (status !== 200) {
 				return false;
 			}
 
-			this.logger.debug("Captcha validation response", data, CaptchaGuard.name);
-
 			return data?.success;
 		} catch (error) {
-			this.logger.error("Failed to validate captcha token", error.stack, CaptchaGuard.name);
+			this.logger.error("Failed to validate captcha token", error);
+			return false;
+		}
+	}
+
+	private async ValidateGRecaptcha(token: string): Promise<boolean> {
+		try {
+			const searchParams = new URLSearchParams();
+
+			searchParams.append("secret", process.env.RECAPTCHA_SECRET_KEY!);
+			searchParams.append("response", decodeURIComponent(token));
+
+			const { data, status } = await axios.post<GRecaptcha>(
+				`https://www.google.com/recaptcha/api/siteverify?${searchParams.toString()}`,
+			);
+
+			this.logger.debug("recaptcha validation response", data);
+			if (status !== 200 || !data?.success) {
+				return false;
+			}
+
+			return data?.score > 0.6;
+		} catch (error) {
+			this.logger.error("Failed to validate captcha token", error);
 			return false;
 		}
 	}
