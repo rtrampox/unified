@@ -31,7 +31,7 @@ export const actions: Actions = {
 				password: form.data.password,
 				trust: form.data.trust,
 			},
-			captcha: { token: form.data["cf-turnstile-response"], type: "recaptcha" },
+			captcha: { token: form.data["cf-turnstile-response"], type: "turnstile" },
 		});
 
 		if (status !== 201 && status !== 200) {
