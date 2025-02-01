@@ -42,6 +42,8 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
+RUN cd apps/api && pnpm dlx prisma generate
+
 RUN turbo run build --filter=api
 ################################################################################
 FROM base AS deps
