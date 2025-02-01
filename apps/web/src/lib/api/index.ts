@@ -6,6 +6,8 @@
  * OpenAPI spec version: 1.0
  */
 import { customFetch } from './custom-fetch';
+export type Test200 = { [key: string]: unknown };
+
 export type AuthorizeParams = {
 client_id: unknown;
 redirect_uri: unknown;
@@ -141,16 +143,7 @@ export interface AuthorizeGetResponse {
   client: AuthorizeGetResponseClient;
 }
 
-export type UpdateClientDtoScopesItem = typeof UpdateClientDtoScopesItem[keyof typeof UpdateClientDtoScopesItem];
-
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const UpdateClientDtoScopesItem = {
-  openid: 'openid',
-  profile: 'profile',
-  email: 'email',
-  offline_access: 'offline_access',
-} as const;
+export type UpdateClientDtoScopesItem = { [key: string]: unknown };
 
 export interface UpdateClientDto {
   name?: string;
@@ -201,16 +194,7 @@ export interface ClientOkResponseWithSecret {
   secret: string;
 }
 
-export type CreateClientDtoScopesItem = typeof CreateClientDtoScopesItem[keyof typeof CreateClientDtoScopesItem];
-
-
-// eslint-disable-next-line @typescript-eslint/no-redeclare
-export const CreateClientDtoScopesItem = {
-  openid: 'openid',
-  profile: 'profile',
-  email: 'email',
-  offline_access: 'offline_access',
-} as const;
+export type CreateClientDtoScopesItem = { [key: string]: unknown };
 
 export interface CreateClientDto {
   name: string;
@@ -290,12 +274,6 @@ export interface UpdatePasswordDto {
   revokeTrustedDevices?: boolean;
 }
 
-export interface ErrorResponseDto {
-  message: string;
-  error: string;
-  statusCode: number;
-}
-
 export interface ErrorsObject {
   message: string;
   errors: string;
@@ -364,25 +342,14 @@ export interface SessionResponse {
   expiresAt: unknown;
 }
 
-export type ContinueLoginDtoIdentity = {
-  email: string;
-  /** @minLength 8 */
-  password: string;
-  trust?: boolean;
-};
-
-export type ContinueLoginDtoOtp = {
-  /**
-   * @minLength 6
-   * @maxLength 6
-   */
+export interface Otp {
   code: string;
   type: string;
-};
+}
 
 export interface ContinueLoginDto {
-  otp: ContinueLoginDtoOtp;
-  identity: ContinueLoginDtoIdentity;
+  otp: Otp;
+  identity: Identity;
 }
 
 export type LoginSession = {
@@ -409,20 +376,15 @@ export interface Login {
   session?: LoginSession;
 }
 
-export type LoginUserDtoCaptcha = {
-  token: string;
-};
-
-export type LoginUserDtoIdentity = {
+export interface Identity {
   email: string;
-  /** @minLength 8 */
   password: string;
   trust?: boolean;
-};
+}
 
 export interface LoginUserDto {
-  identity: LoginUserDtoIdentity;
-  captcha: LoginUserDtoCaptcha;
+  identity: Identity;
+  captcha: Token;
 }
 
 export type RegisterSession = {
@@ -445,26 +407,28 @@ export interface Register {
   session: RegisterSession;
 }
 
-export type RegisterUserDtoCaptcha = {
+export type TokenType = typeof TokenType[keyof typeof TokenType];
+
+
+// eslint-disable-next-line @typescript-eslint/no-redeclare
+export const TokenType = {
+  recaptcha: 'recaptcha',
+  turnstile: 'turnstile',
+} as const;
+
+export interface Token {
   token: string;
-};
+  type: TokenType;
+}
 
 export interface RegisterUserDto {
-  /** @minLength 3 */
   firstName: string;
-  /** @minLength 3 */
   lastName: string;
   email: string;
-  /** @nullable */
-  phone: string | null;
-  /**
-   * @minLength 3
-   * @pattern ^[a-zA-Z0-9]+$
-   */
+  phone?: string;
   username: string;
-  /** @minLength 8 */
   password: string;
-  captcha: RegisterUserDtoCaptcha;
+  captcha: Token;
 }
 
 
@@ -547,7 +511,7 @@ export const loginUser = async (loginUserDto: LoginUserDto, options?: RequestIni
 
 
 export type otpLoginUserResponse = {
-  data: Login;
+  data: Login | void;
   status: number;
   headers: Headers;
 }
@@ -598,7 +562,7 @@ export const getSession = async ( options?: RequestInit): Promise<getSessionResp
 
 
 export type getAuthorizedClientsResponse = {
-  data: GetAppsResponseDto | HttpExceptionEntity | ErrorResponseDto;
+  data: GetAppsResponseDto | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -623,7 +587,7 @@ export const getAuthorizedClients = async ( options?: RequestInit): Promise<getA
 
 
 export type revokeClientResponse = {
-  data: HttpExceptionEntity | ErrorResponseDto;
+  data: void | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -648,7 +612,7 @@ export const revokeClient = async (id: string, options?: RequestInit): Promise<r
 
 
 export type updatePasswordResponse = {
-  data: HttpExceptionEntity | ErrorResponseDto;
+  data: void | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -674,7 +638,7 @@ export const updatePassword = async (updatePasswordDto: UpdatePasswordDto, optio
 
 
 export type getSignedProfilePictureUrlResponse = {
-  data: GetSignedUrlResponse | HttpExceptionEntity | ErrorResponseDto;
+  data: GetSignedUrlResponse | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -699,7 +663,7 @@ export const getSignedProfilePictureUrl = async ( options?: RequestInit): Promis
 
 
 export type completeProfilePictureUploadResponse = {
-  data: HttpExceptionEntity | ErrorResponseDto;
+  data: void | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -801,7 +765,7 @@ export const disableTwoFactor = async (confirmTwoFactorDto: ConfirmTwoFactorDto,
 
 
 export type createClientResponse = {
-  data: ClientOkResponseWithSecret | HttpExceptionEntity | ErrorResponseDto;
+  data: ClientOkResponseWithSecret | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -827,7 +791,7 @@ export const createClient = async (createClientDto: CreateClientDto, options?: R
 
 
 export type findAllResponse = {
-  data: ClientOkResponse[] | HttpExceptionEntity | ErrorResponseDto;
+  data: ClientOkResponse[] | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -852,7 +816,7 @@ export const findAll = async ( options?: RequestInit): Promise<findAllResponse> 
 
 
 export type renewSecretResponse = {
-  data: ClientOkResponseWithSecret | HttpExceptionEntity | ErrorResponseDto;
+  data: ClientOkResponseWithSecret | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -877,7 +841,7 @@ export const renewSecret = async (id: string, options?: RequestInit): Promise<re
 
 
 export type updateClientResponse = {
-  data: ClientOkResponse | HttpExceptionEntity | ErrorResponseDto;
+  data: ClientOkResponse | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -904,7 +868,7 @@ export const updateClient = async (id: string,
 
 
 export type switchClientResponse = {
-  data: ClientOkResponse | HttpExceptionEntity | ErrorResponseDto;
+  data: ClientOkResponse | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -929,7 +893,7 @@ export const switchClient = async (id: string, options?: RequestInit): Promise<s
 
 
 export type getAuthorizeInfoResponse = {
-  data: AuthorizeGetResponse | HttpExceptionEntity | ErrorResponseDto;
+  data: AuthorizeGetResponse | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -961,7 +925,7 @@ export const getAuthorizeInfo = async (params: GetAuthorizeInfoParams, options?:
 
 
 export type authorizeResponse = {
-  data: AuthorizePostResponse | HttpExceptionEntity | ErrorResponseDto;
+  data: AuthorizePostResponse | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -993,7 +957,7 @@ export const authorize = async (params: AuthorizeParams, options?: RequestInit):
 
 
 export type exchangeTokenResponse = {
-  data: ExchangeTokenResponseDto | HttpExceptionEntity | ErrorResponseDto;
+  data: ExchangeTokenResponseDto | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -1018,7 +982,7 @@ export const exchangeToken = async ( options?: RequestInit): Promise<exchangeTok
 
 
 export type testResponse = {
-  data: void;
+  data: Test200;
   status: number;
   headers: Headers;
 }
@@ -1043,7 +1007,7 @@ export const test = async ( options?: RequestInit): Promise<testResponse> => {
 
 
 export type getUserInfoResponse = {
-  data: UserInfoDto | HttpExceptionEntity | ErrorResponseDto;
+  data: UserInfoDto | HttpExceptionEntity;
   status: number;
   headers: Headers;
 }
@@ -1101,7 +1065,7 @@ export type getJwksResponse = {
 export const getGetJwksUrl = () => {
 
 
-  return `http://10.1.1.17:3000/.well-known/openid-configuration/jwks.json`
+  return `http://10.1.1.17:3000/.well-known/jwks.json`
 }
 
 export const getJwks = async ( options?: RequestInit): Promise<getJwksResponse> => {
