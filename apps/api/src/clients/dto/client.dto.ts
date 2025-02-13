@@ -32,7 +32,7 @@ export class CreateClientDto {
 	redirectUri: string[];
 	
 	@IsArray()
-	@MinLegth(1)
+	@MinLength(1)
 	@IsString({ each: true })
 	@IsEnum(Scopes, { each: true })
 	@Transform(({ value }: TransformFnParams) => value.map((v) => v.toLowerCase()) as Scopes)
