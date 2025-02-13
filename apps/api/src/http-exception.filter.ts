@@ -21,7 +21,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
 		const eventTimestamp = new Date().toISOString();
 
-		if (status !== 404 && status !== 400 && status !== 422 && exception.cause !== "NO_SESSION") {
+		if (status !== 404 && status !== 400) {
 			requestId = Sentry.captureException(exception, {
 				level: status >= 500 ? "error" : "warning",
 				tags: {
