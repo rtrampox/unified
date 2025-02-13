@@ -26,13 +26,13 @@ export class CreateClientDto {
 	@IsOptional()
 	picture?: string;
 
-	@MinLength(1)
 	@IsArray()
+	@MinLength(1)
 	@IsUrl({}, { each: true })
 	redirectUri: string[];
-
-	@MinLength(1)
+	
 	@IsArray()
+	@MinLegth(1)
 	@IsString({ each: true })
 	@IsEnum(Scopes, { each: true })
 	@Transform(({ value }: TransformFnParams) => value.map((v) => v.toLowerCase()) as Scopes)
