@@ -11,7 +11,7 @@ import {
 	IsOptional,
 	IsString,
 	IsUrl,
-	MinLength,
+	ArrayNotEmpty,
 } from "class-validator";
 
 export const scopesEnum = z.enum(["openid", "profile", "email", "offline_access"]);
@@ -27,12 +27,12 @@ export class CreateClientDto {
 	picture?: string;
 
 	@IsArray()
-	@MinLength(1)
+	@ArrayNotEmpty()
 	@IsUrl({}, { each: true })
 	redirectUri: string[];
 	
 	@IsArray()
-	@MinLength(1)
+	@ArrayNotEmpty()
 	@IsString({ each: true })
 	@IsEnum(Scopes, { each: true })
 	@Transform(({ value }: TransformFnParams) => value.map((v) => v.toLowerCase()) as Scopes)
