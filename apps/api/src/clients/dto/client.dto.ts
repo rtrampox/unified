@@ -28,7 +28,7 @@ export class CreateClientDto {
 
 	@IsArray()
 	@ArrayNotEmpty()
-	@IsUrl({}, { each: true })
+	@IsString({ each: true })
 	redirectUri: string[];
 	
 	@IsArray()
