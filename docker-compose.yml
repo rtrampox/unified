@@ -1,102 +1,103 @@
 services:
-  api:
-    restart: always
-    networks:
-      - unified_internal
-      - proxy
-    build:
-      context: .
-      dockerfile: ./apps/api/dockerfile
-      args:
-        - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
-    environment:
-      - API_SENTRY_DSN=${SENTRY_DSN}
-      - API_SENTRY_SERVER_NAME=${SENTRY_SERVER_NAME:-unified}
-      - API_SENTRY_RELEASE=${SENTRY_RELEASE:-unified@0.0.5}
+    api:
+        restart: always
+        networks:
+            - unified_internal
+            - proxy
+        build:
+            context: .
+            dockerfile: ./apps/api/dockerfile
+            args:
+                - SENTRY_AUTH_TOKEN=${SENTRY_AUTH_TOKEN}
+        environment:
+            - API_SENTRY_DSN=${SENTRY_DSN}
+            - API_SENTRY_SERVER_NAME=${SENTRY_SERVER_NAME:-unified}
+            - API_SENTRY_RELEASE=${SENTRY_RELEASE:-unified@0.0.5}
+            - NODE_ENV=development
 
-      - DATABASE_URL=${DATABASE_URL}
+            - DATABASE_URL=${DATABASE_URL}
 
-      - API_PUBLIC_URL=${API_PUBLIC_URL}
-      - FRONT_PUBLIC_URL=${FRONT_PUBLIC_URL}
+            - API_PUBLIC_URL=${API_PUBLIC_URL}
+            - FRONT_PUBLIC_URL=${FRONT_PUBLIC_URL}
 
-      - JWT_ISSUER_URL=${JWT_ISSUER_URL}
-      - JWT_SECRET=${JWT_SECRET}
-      - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
-      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
-      - PUBLIC_KEY_KID=${PUBLIC_KEY_KID}
+            - JWT_ISSUER_URL=${JWT_ISSUER_URL}
+            - JWT_SECRET=${JWT_SECRET}
+            - JWT_PRIVATE_KEY=${JWT_PRIVATE_KEY}
+            - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+            - PUBLIC_KEY_KID=${PUBLIC_KEY_KID}
 
-      - AWS_REGION=${AWS_REGION}
-      - AWS_BUCKET=${AWS_BUCKET}
-      - AWS_ENDPOINT_URL=${AWS_ENDPOINT_URL}
-      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+            - AWS_REGION=${AWS_REGION}
+            - AWS_BUCKET=${AWS_BUCKET}
+            - AWS_ENDPOINT_URL=${AWS_ENDPOINT_URL}
+            - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+            - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
 
-      - CF_EMAIL=${CF_EMAIL}
-      - CF_API_KEY=${CF_API_KEY}
-      - CF_ZONE_ID=${CF_ZONE_ID}
+            - CF_EMAIL=${CF_EMAIL}
+            - CF_API_KEY=${CF_API_KEY}
+            - CF_ZONE_ID=${CF_ZONE_ID}
 
-      - CF_TURNSTILE_SECRET_KEY=${CF_TURNSTILE_SECRET_KEY}
+            - CF_TURNSTILE_SECRET_KEY=${CF_TURNSTILE_SECRET_KEY}
 
-      - API_PORT=${API_PORT}
-    depends_on:
-      - db
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.unified_backend.rule=Host(`apis.rtrampox.com.br`) && PathPrefix(`/unified/`) || Host(`apis.rtrampox.dev`) && PathPrefix(`/unified/`)"
-      - "traefik.http.middlewares.pathPrefix_strip.stripprefix.prefixes=/unified"
-      - "traefik.http.routers.unified_backend.middlewares=pathPrefix_strip@docker,gzip"
+            - API_PORT=${API_PORT}
+        depends_on:
+            - db
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.unified_backend.rule=Host(`apis.rtrampox.com.br`) && PathPrefix(`/unified/`) || Host(`apis.rtrampox.dev`) && PathPrefix(`/unified/`)"
+            - "traefik.http.middlewares.pathPrefix_strip.stripprefix.prefixes=/unified"
+            - "traefik.http.routers.unified_backend.middlewares=pathPrefix_strip@docker,gzip"
 
-      - "traefik.http.routers.unified_backend.entrypoints=https"
-      - "traefik.http.routers.unified_backend.tls=true"
-      - "traefik.http.services.unified_backend.loadbalancer.server.port=3000"
-      - "traefik.docker.network=proxy"
+            - "traefik.http.routers.unified_backend.entrypoints=https"
+            - "traefik.http.routers.unified_backend.tls=true"
+            - "traefik.http.services.unified_backend.loadbalancer.server.port=3000"
+            - "traefik.docker.network=proxy"
 
-  web:
-    restart: always
-    networks:
-      - unified_internal
-      - proxy
-    build:
-      context: .
-      dockerfile: ./apps/web/dockerfile
-      args:
-        - BACKEND_URL=${BACKEND_URL}
-        - INPUT_FILE_PATH=${INPUT_FILE_PATH}
-    environment:
-      - PUBLIC_SITE_KEY=${PUBLIC_SITE_KEY}
-      - ORIGIN=https://accounts.rtrampox.dev
-      - PROTOCOL_HEADER=x-forwarded-proto
-      - HOST_HEADER=x-forwarded-host
-      - ADDRESS_HEADER=x-forwarded-for
-      # Allow profile picture uploads, as SvelteKit max size is 512KB
-      - BODY_SIZE_LIMIT=10M
-      - BACKEND_URL=${BACKEND_URL}
-      - INPUT_FILE_PATH=${INPUT_FILE_PATH}
-    depends_on:
-      - api
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.unified_frontend.rule=Host(`accounts.rtrampox.com.br`) || Host(`accounts.rtrampox.dev`)"
-      - "traefik.http.routers.unified_frontend.entrypoints=https"
-      - "traefik.http.routers.unified_frontend.tls=true"
-      - "traefik.http.routers.unified_frontend.middlewares=gzip"
+    web:
+        restart: always
+        networks:
+            - unified_internal
+            - proxy
+        build:
+            context: .
+            dockerfile: ./apps/web/dockerfile
+            args:
+                - BACKEND_URL=${BACKEND_URL}
+                - INPUT_FILE_PATH=${INPUT_FILE_PATH}
+        environment:
+            - PUBLIC_SITE_KEY=${PUBLIC_SITE_KEY}
+            - ORIGIN=https://accounts.rtrampox.dev
+            - PROTOCOL_HEADER=x-forwarded-proto
+            - HOST_HEADER=x-forwarded-host
+            - ADDRESS_HEADER=x-forwarded-for
+            # Allow profile picture uploads, as SvelteKit max size is 512KB
+            - BODY_SIZE_LIMIT=10M
+            - BACKEND_URL=${BACKEND_URL}
+            - INPUT_FILE_PATH=${INPUT_FILE_PATH}
+        depends_on:
+            - api
+        labels:
+            - "traefik.enable=true"
+            - "traefik.http.routers.unified_frontend.rule=Host(`accounts.rtrampox.com.br`) || Host(`accounts.rtrampox.dev`)"
+            - "traefik.http.routers.unified_frontend.entrypoints=https"
+            - "traefik.http.routers.unified_frontend.tls=true"
+            - "traefik.http.routers.unified_frontend.middlewares=gzip"
 
-      - "traefik.http.services.unified_frontend.loadbalancer.server.port=3000"
-      - "traefik.docker.network=proxy"
+            - "traefik.http.services.unified_frontend.loadbalancer.server.port=3000"
+            - "traefik.docker.network=proxy"
 
-  db:
-    restart: always
-    networks:
-      - unified_internal
-    image: postgres:17-alpine
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    volumes:
-      - ./data/db:/var/lib/postgresql/data
+    db:
+        restart: always
+        networks:
+            - unified_internal
+        image: postgres:17-alpine
+        environment:
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
+        volumes:
+            - ./data/db:/var/lib/postgresql/data
 
 networks:
-  unified_internal:
-  proxy:
-    external: true
+    unified_internal:
+    proxy:
+        external: true

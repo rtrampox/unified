@@ -19,4 +19,4 @@
 <!-- svelte-ignore -->
 <ModeWatcher />
 {@render children()}
-<Toaster theme="dark" richColors={true} />
+<Toaster theme="system" richColors={true} closeButton={true} />
