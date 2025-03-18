@@ -49,8 +49,8 @@ type IdTokenModes =
 @Injectable()
 export class JWTService {
 	private JWT_SECRET = jose.base64url.decode(process.env.JWT_SECRET || "");
-	private privKeyStr = process.env.JWT_PRIVATE_KEY as string;
-	private pubKeyStr = process.env.JWT_PUBLIC_KEY as string;
+	private privKeyStr = Buffer.from(process.env.JWT_PRIVATE_KEY as string, "base64url").toString("utf-8");
+	private pubKeyStr = Buffer.from(process.env.JWT_PUBLIC_KEY as string, "base64url").toString("utf-8");
 	private privateKey: jose.KeyLike;
 	private publicKey: jose.KeyLike;
 
